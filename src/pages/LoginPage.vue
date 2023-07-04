@@ -42,6 +42,7 @@ function onRegister() {
   // TODO: Register logic
 }
 function onLogin() {
+  this.$router.push('/')
   // TODO: Login logic
 }
 </script>
@@ -52,14 +53,16 @@ function onLogin() {
 
     <div class="wrapper">
       <div class="greetings">
-        <h1 class="green">地铁客流量预测系统</h1>
-        <h3>
-          项目地址：
-          <a href="https://github.com/AzurIce/2023-BJTU-SummerPractice-Subway" target="_blank" rel="noopener">Github</a>
+        <h1 class="green tw-text-center lg:tw-text-left">地铁客流量预测系统</h1>
+        <h3 class="tw-text-center lg:tw-text-left">
+          <p>「虽是咸鱼，但也要挣扎」</p>
+          <p class="mt-2">
+            项目地址：
+            <a href="https://github.com/AzurIce/2023-BJTU-SummerPractice-Subway" target="_blank" rel="noopener">Github</a>
+          </p>
         </h3>
       </div>
-      <!-- <HelloWorld msg="You did it!" /> -->
-
+      
       <nav>
         <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/about">About</RouterLink>
@@ -67,24 +70,24 @@ function onLogin() {
     </div>
   </header>
   <main>
-    <div class="flex flex-col gap-2">
-      <v-sheet width="300" class="mx-auto">
+    <div class="tw-flex tw-flex-col tw-gap-2">
+      <v-sheet width="300" class="tw-mx-auto">
         <v-form @submit.prevent>
           <v-text-field v-model="state.username" :rules="rulesUsername" label="Username" />
           <v-text-field v-model="state.password" :rules="rulesPassword" label="Password" />
           <v-text-field v-model="state.repeatPassword" :rules="rulesRepeatPassword" label="RepeatPassword"
             v-if="tab == 'register'" />
         </v-form>
-        <div class="flex gap-2 mt-2 w-300 justify-around">
+        <div class="tw-flex tw-gap-2 tw-mt-2 tw-w-300 tw-justify-around">
           <v-btn @click="tab == 'login' ? onLogin() : switchTab()" :ripple="false"
-            :color="tab == 'login' ? 'blue' : 'white'" size="large" class="flex-1"
+            :color="tab == 'login' ? 'blue' : 'white'" size="large" class="tw-flex-1"
             :class="tab == 'login' ? 'basis-3/4' : 'basis-1/4'">
-            {{ tab == 'login' ? "登录" : "注册" }}
+            登录
           </v-btn>
           <v-btn @click="tab == 'register' ? onRegister() : switchTab()" :ripple="false"
-            :color="tab == 'login' ? 'white' : 'blue'" size="large" class="flex-1"
+            :color="tab == 'login' ? 'white' : 'blue'" size="large" class="tw-flex-1"
             :class="tab == 'login' ? 'basis-1/4' : 'basis-3/4'">
-            {{ tab == 'login' ? "注册" : "登录" }}
+            注册
           </v-btn>
         </div>
       </v-sheet>
@@ -95,7 +98,7 @@ function onLogin() {
 <style scoped>
 h1 {
   font-weight: 500;
-  font-size: 2.6rem;
+  font-size: 2.3rem;
   position: relative;
   top: -10px;
 }
@@ -104,17 +107,6 @@ h3 {
   font-size: 1.2rem;
 }
 
-.greetings h1,
-.greetings h3 {
-  text-align: center;
-}
-
-@media (min-width: 1024px) {
-  .greetings h1,
-  .greetings h3 {
-    text-align: left;
-  }
-}
 .v-enter-active,
 .v-leave-active {
   transition: opacity 0.5s ease;
@@ -164,7 +156,6 @@ nav a:first-of-type {
   header {
     display: flex;
     place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
   }
 
   .logo {
