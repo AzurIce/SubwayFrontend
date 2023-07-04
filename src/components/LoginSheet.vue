@@ -1,0 +1,35 @@
+<script setup>
+import { ref } from 'vue'
+
+const username = ref('')
+const password = ref('')
+
+const rulesUsername = [
+  value => {
+    if (value) return true
+
+    return '用户名不能为空.'
+  },
+]
+
+const rulesPassword = [
+  value => {
+    if (value) return true
+
+    return '密码不能为空.'
+  },
+]
+</script>
+
+<template>
+    <v-sheet width="300" class="mx-auto" v-if="tab == 'login'">
+        <v-form @submit.prevent>
+          <v-text-field v-model="username" :rules="rulesUsername" label="Username" />
+          <v-text-field v-model="password" :rules="rulesPassword" label="Password" />
+        </v-form>
+        <div class="flex gap-2 mt-2 w-300 justify-around">
+          <v-btn type="submit" color="blue" size="large">登录</v-btn>
+          <v-btn size="large" @click="() => { tab = 'register' }">注册</v-btn>
+        </div>
+      </v-sheet>
+</template>
