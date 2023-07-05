@@ -1,7 +1,9 @@
 <script setup>
 // import TheWelcome from '../components/TheWelcome.vue'
 
+// import { login } from '../lib/axios/user'
 import { reactive, ref } from 'vue'
+import router from '../router/index'
 
 const state = reactive({
   username: '',
@@ -42,8 +44,14 @@ function onRegister() {
   // TODO: Register logic
 }
 function onLogin() {
-  this.$router.push('/')
-  // TODO: Login logic
+  router.push('/')
+  // TODO: login logic
+  // login(state.username, state.password).then((res) => {
+  //   router.push('/')
+  //   console.log(res)
+  // }).catch((err) => {
+  //     console.log(err)
+  // })
 }
 </script>
 
@@ -75,9 +83,9 @@ function onLogin() {
         <v-sheet width="300" class="tw-mx-auto">
           <v-form @submit.prevent>
             <v-text-field v-model="state.username" :rules="rulesUsername" label="Username" />
-            <v-text-field v-model="state.password" :rules="rulesPassword" label="Password" />
+            <v-text-field v-model="state.password" :rules="rulesPassword" label="Password" type="password"/>
             <v-text-field v-model="state.repeatPassword" :rules="rulesRepeatPassword" label="RepeatPassword"
-              v-if="tab == 'register'" />
+              v-if="tab == 'register'" type="password"/>
           </v-form>
           <div class="tw-flex tw-gap-2 tw-mt-2 tw-w-300 tw-justify-around">
             <v-btn @click="tab == 'login' ? onLogin() : switchTab()" :ripple="false"

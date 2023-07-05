@@ -1,3 +1,33 @@
+## GeoJson
+
+[GeoJSON](https://geojson.org/)
+
+
+
+## GTFS
+
+[MTA Developer Resources](https://api.mta.info/#/landing)
+
+[transit/gtfs-realtime/spec/en/feed-entities.md at master · google/transit · GitHub](https://github.com/google/transit/blob/master/gtfs-realtime/spec/en/feed-entities.md)
+
+
+
+[mta.info | Developer Agreement for Access to Data Feeds](http://web.mta.info/developers/developer-data-terms.html#data)
+
+![image-20230705130402184](./Draft.assets/image-20230705130402184.png)
+
+此处可以获取 GTFS 中使用的线路数据：
+
+
+
+
+
+
+
+[LiveTrain.nyc | The MTA and AT&T Present: App Quest 3.0 (devpost.com)](https://2014mtaappquest.devpost.com/submissions/32529-livetrain-nyc)
+
+[livetrain_nyc/public/javascripts/scripts.js at master · mjprude/livetrain_nyc · GitHub](https://github.com/mjprude/livetrain_nyc/blob/master/public/javascripts/scripts.js)
+
 ## 地图
 
 ### <s>Google Maps Platform</s> 百度地图开放平台
@@ -31,8 +61,6 @@
 
 ## 数据
 
-[MTA Developer Resources](https://api.mta.info/#/landing)
-
 [Normal and New Normal: NYC Subway Traffic 2017-21 | Kaggle](https://www.kaggle.com/datasets/eddeng/nyc-subway-traffic-data-20172021/code)
 
 [notebook787ea033db | Kaggle](https://www.kaggle.com/code/varusjz/notebook787ea033db)
@@ -49,3 +77,4 @@ Vite + Vue
 
 [一个 Vue 3 UI 框架 | Element Plus (gitee.io)](https://element-plus.gitee.io/zh-CN/)
 
+[Getting Started - General Transit Feed Specification (gtfs.org)](https://gtfs.org/realtime/)
