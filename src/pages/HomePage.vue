@@ -19,7 +19,7 @@ onMounted(() => {
     // center: [-73.904496, 40.720449], // starting position [lng, lat]
     maxBounds: [
       [-74.309883, 40.48388],
-      [-73.677476, 40.899622]
+      [-73.677476, 40.909622]
     ],
     zoom: 9, // starting zoom
   });
@@ -43,7 +43,8 @@ onMounted(() => {
       },
       'paint': {
         'line-color': ["get", 'color'],
-        'line-width': 2
+        'line-width': 2,
+        // 'line-opacity': 0.6,
       }
     })
     map.addLayer({
@@ -51,7 +52,7 @@ onMounted(() => {
       'type': 'circle',
       'source': 'stop',
       'paint': {
-        'circle-pitch-scale': 'viewport',
+        // 'circle-pitch-scale': 'map',
         'circle-color': '#dddddd',
         'circle-opacity': 0.3,
         'circle-radius': 4
@@ -95,7 +96,7 @@ function onGetData() {
 </script>
 
 <template>
-  <button @click="onGetData">getData</button>
+  <!-- <button @click="onGetData">getData</button> -->
   <!-- <button @click="() => {map.setCenter([0, 0])}">asddasdasd</button> -->
   <div id="map" class="tw-h-full tw-w-full" />
   <!-- <BMap
