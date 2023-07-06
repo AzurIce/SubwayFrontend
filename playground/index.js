@@ -1,6 +1,6 @@
 import GtfsRealtimeBindings from "gtfs-realtime-bindings"
 import fetch from "node-fetch"
-import stops_data from './stops.json' assert {type: 'json'}
+import stops_data from './google_transit/stops.json' assert {type: 'json'}
 
 const urls = [
   "https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-ace",
@@ -38,24 +38,26 @@ async function getData(url) {
 
 (async () => {
   try {
-    for (let i = 0; i < urls.length; i++) {
-      const feed = await getData(urls[i])
+    const feed = await getData('https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs')
+    //    for (let i = 0; i < urls.length; i++) {
+    //      const feed = await getData(urls[i])
+    //
+    //      let route_id = []
+    //      let res = feed.entity
+    //      res.forEach(entity => {
+    //        if (entity.vehicle) {
+    //          route_id.push(entity.vehicle.trip.routeId)
+    //        }
+    //      })
+    //      console.log([...new Set(route_id)])
+    //    }
+    //  console.log(feed.entity[0].tripUpdate)
+    //  for (let i in feed.entity[0].tripUpdate.stopTimeUpdate) {
+    //     console.log(feed.entity[0].tripUpdate.stopTimeUpdate[i])
+    //  }
+    //     console.log(feed.entity[0].tripUpdate.stopTimeUpdate[0])
+    //  console.log(feed.entity[1].vehicle)
 
-      let route_id = []
-      let res = feed.entity
-      res.forEach(entity => {
-        if (entity.vehicle) {
-          route_id.push(entity.vehicle.trip.routeId)
-        }
-      })
-      console.log([...new Set(route_id)])
-    }
-    // feed.entity.forEach((entity) => {
-    //   // console.log(entity)
-    //   if (entity.tripUpdate) {
-    //     // console.log(entity.tripUpdate);
-    //   }
-    // });
 
     // let route_id = []
     // let res = feed.entity
@@ -67,41 +69,58 @@ async function getData(url) {
     // console.log([...new Set(route_id)])
 
 
-    // let geojson = {}
+    let geojson = {
+      'type': 'FeatureCollection',
+      'features': []
+    };
 
-    // let data = {}
-    // let res = feed.entity
-    // res.forEach(entity => {
-    //   if (entity.tripUpdate) {
-    //     let tripId = entity.tripUpdate.trip.tripId
-    //     if (entity.tripUpdate.stopTimeUpdate.length != 0) {
-    //       // console.log(tripId)
-    //       if (!data[tripId]) {
-    //         data[tripId] = {}
-    //       }
+    let data = {}
+    let res = feed.entity
+    res.forEach(entity => {
+      if (entity.tripUpdate) {
+        //        console.log(entity.tripUpdate)
+        //        let tripId = entity.tripUpdate.trip.tripId
+        //        if (entity.tripUpdate.stopTimeUpdate.length != 0) {
+        //          // console.log(tripId)
+        //          if (!data[tripId]) {
+        //            data[tripId] = {}
+        //          }
+        //
+        //          data[tripId].trips = entity.tripUpdate.stopTimeUpdate.map((stopTime) => {
+        //            return {
+        //              timestamp: stopTime.arrival.timestamp,
+        //              stopId: stopTime.stopId,
+        //            }
+        //          })
+        //        }
+      } else if (entity.vehicle) {
+        console.log(entity.vehicle)
+        let tripId = entity.vehicle.trip.tripId
+        if (!data[tripId]) {
+          data[tripId] = {}
+        }
+        //          if (entity.vehicle.timestamp <= new Date().getTime() && data[tripId]) {
+        //
+        //            data[tripId].vehicle = {
+        //              timestamp: entity.vehicle.timestamp,
+        //              stopId: entity.vehicle.stopId,
+        //            }
+        let stop = stops_data[entity.vehicle.stopId]
+        geojson.features.push(
+          {
+              'type': 'Feature',
+              'geometry': {
+                  'type': 'Point',
+                  'coordinates': [stop.lon, stop.lat]
+              }
+          }
+        )
+      }
+    })
 
-    //       data[tripId].trips = entity.tripUpdate.stopTimeUpdate.map((stopTime) => {
-    //         return {
-    //           timestamp: stopTime.arrival.time,
-    //           stopId: stopTime.stopId,
-    //         }
-    //       })
-    //     }
-    //   } else {
-    //     if (entity.vehicle) {
-    //       let tripId = entity.vehicle.trip.tripId
-    //       if (entity.vehicle.timestamp <= new Date().getTime() && data[tripId]) {
 
-    //         data[tripId].vehicle = {
-    //           timestamp: entity.vehicle.timestamp,
-    //           stopId: entity.vehicle.stopId,
-    //         }
-    //       }
-    //     }
-    //   }
-    // })
 
-    // console.log(data)
+    console.log(geojson)
     // let preLoc, nextLoc, curLoc
     // for (let tripId in data) {
     //   let preTimestamp, preStopId = data[tripId].vehicle

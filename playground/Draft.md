@@ -1,4 +1,161 @@
+GTFS Static：[Reference  | Static Transit  | Google for Developers](https://developers.google.com/transit/gtfs/reference#tripstxt)
+
+GTFS Realtime：[GTFS Realtime Overview  | Realtime Transit  | Google for Developers](https://developers.google.com/transit/gtfs-realtime)
+
+## GTFS Static 文件
+
+### 一些结构
+
+### routes.txt
+
+| Field Name         | Type  | Required                   | Description                                                  |
+| :----------------- | :---- | :------------------------- | :----------------------------------------------------------- |
+| `route_id`         | ID    | **Required**               | route 的唯一标识                                             |
+| `route_short_name` | Text  | **Conditionally required** | Short name of a route                                        |
+| `route_long_name`  | Text  | **Conditionally required** | Full name of a route                                         |
+| `route_desc`       | Text  | Optional                   | Description of a route                                       |
+| `route_type`       | Enum  | **Required**               | `1` - **Subway, Metro**. Any underground rail system within a metropolitan area. <br />`2` - **Rail**. Used for intercity or long-distance travel. `3` - Bus. Used for short- and long-distance bus routes. |
+| `route_url`        | URL   | Optional                   | URL of a web page about the particular route. Should be different from the `agency.agency_url` value. |
+| `route_color`      | Color | Optional                   | Route color designation that matches public facing material. Defaults to white (`FFFFFF`) when omitted or left empty. The color difference between `route_color` and `route_text_color` should provide sufficient contrast when viewed on a black and white screen. |
+| `route_text_color` | Color | Optional                   | Legible color to use for text drawn against a background of `route_color`. Defaults to black (`000000`) when omitted or left empty. The color difference between `route_color` and `route_text_color` should provide sufficient contrast when viewed on a black and white screen. |
+
+### trips.txt
+
+| Field Name      | Type                                                         | Required                   | Description           |
+| :-------------- | :----------------------------------------------------------- | :------------------------- | :-------------------- |
+| `route_id`      | ID referencing `routes.route_id`                             | **Required**               | route 的唯一标识      |
+| `service_id`    | ID referencing `calendar.service_id` or `calendar_dates.service_id` | **Required**               | service 的唯一标识    |
+| `trip_id`       | ID                                                           | **Required**               | trip 的唯一标识       |
+| `trip_headsign` | Text                                                         | Optional                   | 与前进方向有关        |
+| `direction_id`  | Enum                                                         | Optional                   | 与前进方向有关        |
+| `shape_id`      | ID referencing `shapes.shape_id`                             | **Conditionally required** | 一段 shape 的唯一标识 |
+
+### shapes.txt
+
+| Field Name          | Type                 | Required     | Description               |
+| :------------------ | :------------------- | :----------- | :------------------------ |
+| `shape_id`          | ID                   | **Required** |                           |
+| `shape_pt_lat`      | Latitude             | **Required** | Latitude                  |
+| `shape_pt_lon`      | Longitude            | **Required** | Longitude                 |
+| `shape_pt_sequence` | Non-negative integer | **Required** | 该点位于 shape 中的序列号 |
+
+>```
+>'1': '1..N03R'
+>```
+>
+>
+
+
+
+## GTFS Realtime 结构
+
+FeedEntity 中是 TripUpdate、Vehicle、TripUpdate、Vehicle、...... 的序列。
+
+其中 TripUpdate 与 Vehicle 一一对应，`trip_id` 一致。
+
+TripUpdate 与 Vehicle 示例：
+
+```json
+TripUpdate {
+  stopTimeUpdate: [
+    StopTimeUpdate {
+      arrival: StopTimeEvent {
+        time: Long { low: 1688621086, high: 0, unsigned: false }
+      },
+      departure: StopTimeEvent {
+        time: Long { low: 1688621086, high: 0, unsigned: false }
+      },
+      stopId: 'H06S'
+    },
+    StopTimeUpdate {
+      arrival: StopTimeEvent {
+        time: Long { low: 1688621386, high: 0, unsigned: false }
+      },
+      departure: StopTimeEvent {
+        time: Long { low: 1688621386, high: 0, unsigned: false }
+      },
+      stopId: 'H07S'
+    },
+    StopTimeUpdate {
+      arrival: StopTimeEvent {
+        time: Long { low: 1688621611, high: 0, unsigned: false }
+      },
+      departure: StopTimeEvent {
+        time: Long { low: 1688621611, high: 0, unsigned: false }
+      },
+      stopId: 'H08S'
+    },
+    StopTimeUpdate {
+      arrival: StopTimeEvent {
+        time: Long { low: 1688621701, high: 0, unsigned: false }
+      },
+      departure: StopTimeEvent {
+        time: Long { low: 1688621701, high: 0, unsigned: false }
+      },
+      stopId: 'H09S'
+    },
+    StopTimeUpdate {
+      arrival: StopTimeEvent {
+        time: Long { low: 1688621821, high: 0, unsigned: false }
+      },
+      departure: StopTimeEvent {
+        time: Long { low: 1688621821, high: 0, unsigned: false }
+      },
+      stopId: 'H10S'
+    },
+    StopTimeUpdate {
+      arrival: StopTimeEvent {
+        time: Long { low: 1688621911, high: 0, unsigned: false }
+      },
+      departure: StopTimeEvent {
+        time: Long { low: 1688621911, high: 0, unsigned: false }
+      },
+      stopId: 'H11S'
+    }
+  ],
+  trip: TripDescriptor {
+    tripId: '141095_A..S',
+    startTime: '23:30:57',
+    startDate: '20230705',
+    routeId: 'A'
+  }
+}
+```
+
+> 其中每个 StopTimeUpdate 中的 arrival 与 departure 相同
+
+```json
+VehiclePosition {
+  multiCarriageDetails: [],
+  trip: TripDescriptor {
+    tripId: '141095_A..S',
+    startTime: '23:30:57',
+    startDate: '20230705',
+    routeId: 'A'
+  },
+  currentStopSequence: 51,
+  currentStatus: 1,
+  timestamp: Long { low: 1688620866, high: 0, unsigned: true },
+  stopId: 'H04S'
+}
+```
+
+
+
+
+
+
+
 ## MTA 的 GTFS 解析
+
+
+
+
+
+
+
+
+
 
 - EntitySelector
   - `string agency_id`

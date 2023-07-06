@@ -1,7 +1,5 @@
 <script setup>
-import GtfsRealtimeBindings from "gtfs-realtime-bindings";
 import 'mapbox-gl/dist/mapbox-gl.css';
-// import subway_lines_data from '../assets/Subway Lines.geojson'
 import { onMounted } from 'vue'
 
 import mapboxgl from 'mapbox-gl'; // or "const mapboxgl = require('mapbox-gl');"
@@ -10,7 +8,12 @@ mapboxgl.accessToken = 'pk.eyJ1IjoiYXp1cmljZSIsImEiOiJjbGpwMnQxcXIxYTNpM2VvNmo0O
 
 let map = null
 
-import axios from 'axios'
+import { getData } from '../lib/gtfs/gtfs'
+import axios from 'axios';
+// import stops_data from './stops.json'
+import stops_data from '../assets/stops.json'
+
+// console.log(stops_data)
 
 onMounted(() => {
   map = new mapboxgl.Map({
@@ -24,7 +27,7 @@ onMounted(() => {
     zoom: 9, // starting zoom
   });
 
-  map.on('load', () => {
+  map.on('load', async () => {
     map.addSource('route', {
       'type': 'geojson',
       'data': 'shapes.geojson'
@@ -60,41 +63,77 @@ onMounted(() => {
         'circle-radius': 4
       }
     })
+
+    const geojson = await getGeoJson();
+    // console.log(geojson)
+    map.addSource('vehicles', {
+      type: 'geojson',
+      data: geojson
+    });
+    map.addLayer({
+      'id': 'vehicles',
+      'type': 'circle',
+      'source': 'vehicles',
+      'paint': {
+        // 'circle-pitch-scale': 'map',
+        'circle-color': '#ff0000',
+        'circle-radius': 4
+      }
+    })
+
+    map.moveLayer('route', 'stop')
+    map.moveLayer('stop', 'vehicles')
+
+    // getGeoJson()
+    // Update the source from the API every 2 seconds.
+    const updateSource = setInterval(async () => {
+      const geojson = await getGeoJson(updateSource);
+      console.log('?', geojson)
+      map.getSource('vehicles').setData(geojson);
+    }, 10000);
+
+    async function getGeoJson(updateSource) {
+      try {
+        const feed = await getData('https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs')
+        // console.log(feed)
+        let geojson = {
+          'type': 'FeatureCollection',
+          'features': []
+        };
+
+        feed.entity.forEach(entity => {
+          if (entity.vehicle) {
+            // console.log(entity.vehicle)
+            let stop = stops_data[entity.vehicle.stopId]
+            // console.log(stop)
+            geojson.features.push(
+              {
+                'type': 'Feature',
+                'geometry': {
+                  'type': 'Point',
+                  'coordinates': [stop.lon, stop.lat]
+                }
+              }
+            )
+          }
+        })
+
+        return geojson
+      } catch (err) {
+        if (updateSource) clearInterval(updateSource);
+      }
+    }
   })
 
 })
 // -73.913192,40.903221
 // -73.764864,40.533469
 
-function onGetData() {
-  axios.get(
-    'https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-ace',
-    {
-      headers: { "x-api-key": 'wfaW5qsRVD3CjWqaCecgz5w3PswW11Dxa3iv3PAl' },
-      responseType: 'arraybuffer'
-    }
-  ).then((res) => {
-    // 处理成功情况
-    console.log(res.data);
-    console.log(new Uint8Array(res.data))
-    const feed = GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(
-      new Uint8Array(res.data)
-    );
-    feed.entity.forEach((entity) => {
-      if (entity.tripUpdate) {
-        console.log(entity.tripUpdate);
-      }
-      // if (entity.vehicle && entity.vehicle.position) {
-      //   console.log(entity.vehicle.position);
-      // }
-    });
-  }).catch((error) => {
-    // 处理错误情况
-    console.log(error);
-  }).then(() => {
-    // 总是会执行
-  });
-}
+
+
+// async function onGetData() {
+//   const geojson = getData()
+// }
 </script>
 
 <template>
