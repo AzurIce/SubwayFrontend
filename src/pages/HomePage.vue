@@ -43,7 +43,9 @@ onMounted(() => {
       },
       'paint': {
         'line-color': ["get", 'color'],
-        'line-width': 2,
+        'line-width': 6,
+        'line-opacity': 0.4,
+        // 'line-width': 2,
         // 'line-opacity': 0.6,
       }
     })

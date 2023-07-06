@@ -1,3 +1,57 @@
+tripUpdate 中包含某一条线路站点的到达以及出发预计时间。
+
+其后跟随的 vehicle 所在线路与其对应。
+
+
+
+GTFS Realtime API -> geojso of each train -> update map source
+
+
+
+shapes.txt 正序为 N 逆序为 S
+
+
+
+
+
+
+
+
+
+route  shape
+
+线路 -> 形状 -> 点（坐标）
+
+
+
+​        stop
+
+GTFS -> 站点 & 时间戳
+
+
+
+列车的坐标
+
+
+
+
+
+trip.route_id <-> routes.csv route_id
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 示例数据：
 
 ```json
