@@ -32,6 +32,16 @@
 
 [goodservice.io - New York City Subway Status Page](https://www.goodservice.io/trains)
 
+[The Weekendest - Real-Time New York City Subway Map](https://www.theweekendest.com/trains#40.73403024170918,-74.03990999305302/10.970512671399254/29)
+
+[MTA Live Subway Map](https://map.mta.info/#@40.8082956,-73.9776945,14.02z)
+
+
+
+[vasile/GTFS-viz: Converts a GTFS dataset into a SQLite DB + GeoJSONs / KMLs (github.com)](https://github.com/vasile/GTFS-viz)
+
+[vasile/transit-map: The server and client used in transit map simulations like swisstrains.ch (github.com)](https://github.com/vasile/transit-map)
+
 ## 地图
 
 ### <s>Google Maps Platform</s> 百度地图开放平台

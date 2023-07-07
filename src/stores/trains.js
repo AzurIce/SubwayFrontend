@@ -7,23 +7,31 @@ export const useCounterStore = defineStore('trains', () => {
   const trips = ref([])
 
   async function updateTrains() {
-    let geojson = {}
+    // let geojson = {}
 
-    let data = {}
-    let res = getData()
-    res.forEach(entity => {
-      if (entity.vehicle) {
-        if (!data[entity.vehicle.trip.trip_id]) {
-          data[entity.vehicle.trip.trip_id] = {}
-        }
-        
-      } else if (entity.tripUpdate) {
-        if (!data[entity.tripUpdate.trip.trip_id]) {
-          data[entity.tripUpdate.trip.trip_id] = {}
-        }
+    const feed = await getData('https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs')
+        // console.log(feed)
+        let geojson = {
+          'type': 'FeatureCollection',
+          'features': []
+        };
 
-      }
-    })
+        feed.entity.forEach(entity => {
+          if (entity.vehicle) {
+            // console.log(entity.vehicle)
+            let stop = stops_data[entity.vehicle.stopId]
+            // console.log(stop)
+            geojson.features.push(
+              {
+                'type': 'Feature',
+                'geometry': {
+                  'type': 'Point',
+                  'coordinates': [stop.lon, stop.lat]
+                }
+              }
+            )
+          }
+        })
   }
 
   return { trains, updateTrains }

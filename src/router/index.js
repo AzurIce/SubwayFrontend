@@ -3,6 +3,9 @@ import { createRouter, createWebHistory } from 'vue-router'
 import LoginPage from '../pages/LoginPage.vue'
 import HomePage from '../pages/HomePage.vue'
 
+import {useTokenStore} from '../stores/token'
+
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -31,7 +34,8 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from) => {
-  if (to.meta.requireAuth && false) { // TODO: replace `true` with token check
+  const tokenStore = useTokenStore()
+  if (to.meta.requireAuth && !tokenStore.isLoggedIn && !import.meta.env.DEV) {
     router.replace('/login')
     return false
   }

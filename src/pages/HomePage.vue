@@ -9,7 +9,7 @@ mapboxgl.accessToken = 'pk.eyJ1IjoiYXp1cmljZSIsImEiOiJjbGpwMnQxcXIxYTNpM2VvNmo0O
 let map = null
 
 import { getData } from '../lib/gtfs/gtfs'
-import axios from 'axios';
+// import axios from 'axios';
 // import stops_data from './stops.json'
 import stops_data from '../assets/stops.json'
 
@@ -137,9 +137,18 @@ onMounted(() => {
 </script>
 
 <template>
+  <v-layout class="tw-h-full">
+    <v-app-bar :elevation="2" title="地铁客流量预测系统">
+      <v-btn icon="mdi-poll"></v-btn>
+      <v-btn icon="mdi-exit-run"></v-btn>
+    </v-app-bar>
+    <v-main class="tw-h-full">
+      <div id="map" class="tw-h-full tw-w-full" />
+    </v-main>
+  </v-layout>
   <!-- <button @click="onGetData">getData</button> -->
   <!-- <button @click="() => {map.setCenter([0, 0])}">asddasdasd</button> -->
-  <div id="map" class="tw-h-full tw-w-full" />
+  
   <!-- <BMap
     :height="'100%'"
     :width="'100%'"

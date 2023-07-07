@@ -6,13 +6,14 @@ import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
 
+import '@mdi/font/css/materialdesignicons.css'
 import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
-const vuetify = createVuetify()
+// import { aliases, mdi } from 'vuetify/iconsets/mdi'
 
 createApp(App)
-    .use(createPinia())
-    .use(router)
-    .use(vuetify)
+  .use(createPinia())
+  .use(router)
+  .use(createVuetify())
 
-    .mount('#app')
+  .mount('#app')
