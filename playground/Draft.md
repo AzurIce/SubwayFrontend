@@ -1,3 +1,27 @@
+## 数据文件来源
+
+- `google_transit`
+
+  > [mta.info | Developer Agreement for Access to Data Feeds](http://web.mta.info/developers/developer-data-terms.html#data)
+  >
+  > Static Data Feeds -> MTA All-Agency -> GTFS -> [New York City Transit Subway](http://web.mta.info/developers/data/nyct/subway/google_transit.zip)
+
+  - `agency.csv`
+  - `calendar.csv`
+  - `calendar_dates.csv`
+  - `routes.csv`
+  - `shapes.csv`
+  - `stop_times.csv`
+  - `stops.csv`
+  - `transfers.csv`
+  - `trips.csv`
+
+
+
+---
+
+
+
 GTFS Static：[Reference  | Static Transit  | Google for Developers](https://developers.google.com/transit/gtfs/reference#tripstxt)
 
 GTFS Realtime：[GTFS Realtime Overview  | Realtime Transit  | Google for Developers](https://developers.google.com/transit/gtfs-realtime)
@@ -41,6 +65,7 @@ GTFS Realtime：[GTFS Realtime Overview  | Realtime Transit  | Google for Develo
 
 >```
 >'1': '1..N03R'
+>
 >```
 >
 >
