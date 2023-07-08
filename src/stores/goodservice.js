@@ -8,7 +8,7 @@ const stopsUrl = 'https://www.goodservice.io/api/stops/'
 import stationData from '../data/station_details.json'
 function initStations() {
   let stations = {}
-  console.log('initStations...')
+  // console.log('initStations...')
   Object.keys(stationData).forEach((key) => {
     stations[key] = stationData[key]
     stations[key]['id'] = key
@@ -213,7 +213,7 @@ export const useMapStore = defineStore('goodservice', () => {
   }
 
   function getRoutePath(route) {
-    console.log('routingGeoJson...')
+    // console.log('routingGeoJson...')
     const r = route.slice(0)
 
     let path = []
@@ -246,12 +246,12 @@ export const useMapStore = defineStore('goodservice', () => {
 
     let routesGeoJson = {}
     Object.keys(trains.value).forEach((key) => {
-      console.log(`Rendering route ${key}...`)
+      // console.log(`Rendering route ${key}...`)
       // calc(key)
       if (!processedRoutings.value[key].length) {
         return
       }
-      console.log(`processedRoutings[${key}]: `, processedRoutings.value[key])
+      // console.log(`processedRoutings[${key}]: `, processedRoutings.value[key])
       const coordinates = processedRoutings.value[key].map((r) => {
         return getRoutePath(r)
       })
