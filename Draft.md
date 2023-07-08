@@ -1,3 +1,29 @@
+## theweekendest
+
+apiUrl routes[key].actualroutings
+
+north [[xx, xx, xx], [xx, xx]]
+
+south ...
+
+
+
+- fetchData
+
+  stopsUrl -> **stops**, accessibleStations, elevatorOutages !! processRoutings
+
+  apiUrl -> **trains**, blogPost, timeStamp, loading !! processRoutings
+
+- processRoutings
+
+  stops >>> stationData -> 每站停的线路 stops, northStops, southStops
+
+  - trains for each key
+
+    
+
+  
+
 ## GeoJson
 
 [GeoJSON](https://geojson.org/)
@@ -33,6 +59,8 @@
 [goodservice.io - New York City Subway Status Page](https://www.goodservice.io/trains)
 
 [The Weekendest - Real-Time New York City Subway Map](https://www.theweekendest.com/trains#40.73403024170918,-74.03990999305302/10.970512671399254/29)
+
+> [anthonymedinawork/theweekendest: Real-time New York City subway service map (github.com)](https://github.com/anthonymedinawork/theweekendest)
 
 [MTA Live Subway Map](https://map.mta.info/#@40.8082956,-73.9776945,14.02z)
 
