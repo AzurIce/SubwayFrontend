@@ -47,14 +47,14 @@ async function updateRoutes() {
             14, 5,
           ],
           "line-color": ["get", "color"],
-          // "line-offset": [
-          //   "interpolate",
-          //   ["linear"],
-          //   ["zoom"],
-          //   8, ["get", "offset"],
-          //   13, ["*", ["get", "offset"], 1.5],
-          //   14, ["*", ["get", "offset"], 3],
-          // ],
+          "line-offset": [
+            "interpolate",
+            ["linear"],
+            ["zoom"],
+            8, ["get", "offset"],
+            13, ["*", ["get", "offset"], 1.5],
+            14, ["*", ["get", "offset"], 3],
+          ],
           "line-opacity": ["get", "opacity"],
         }
       };

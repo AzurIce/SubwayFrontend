@@ -5,6 +5,21 @@ import axios from 'axios'
 const apiUrl = 'https://www.goodservice.io/api/routes/?detailed=1'
 const stopsUrl = 'https://www.goodservice.io/api/stops/'
 
+const M_TRAIN_SHUFFLE = ["M21", "M20", "M19", "M18", "M16", "M14", "M13", "M12", "M11"];
+
+// Trains passing through these stations can be physically in the opposite direction of trains that are running in the same direction
+// The keys represent such stations, the values represent subsequent stations that if a train stops there, we would need to reverse its direction of the keys
+const STATIONS_TO_FLIP_DIRECTIONS = {
+  "D14": "F12",
+  "D43": "D42",
+  "A42": "G36",
+}
+
+const routeIds = [
+  '2', '3', '1', '4', '5', '6', '6X', '7', '7X', 'A', 'AL', 'C', 'E', 'F', 'FX',
+  'D', 'B', 'M', 'J', 'Z', 'R', 'N', 'Q', 'W', 'G', 'H', 'FS', 'GS', "L", "SI"
+];
+
 import stationData from '../data/station_details.json'
 function initStations() {
   let stations = {}
@@ -36,6 +51,72 @@ export const useMapStore = defineStore('goodservice', () => {
   const destinations = ref(new Set())
   const transferStations = ref(new Set())
   const calculatedPaths = {}
+
+  const offsets = ref({})
+
+  function shouldReverseDirection(fromRouteId, toRouteId, stationId) {
+    return Object.keys(STATIONS_TO_FLIP_DIRECTIONS).some((targetStation) => {
+      const triggerStation = STATIONS_TO_FLIP_DIRECTIONS[targetStation];
+      return (stationId === targetStation && stations[triggerStation].stops.has(fromRouteId) !== stations[triggerStation].stops.has(toRouteId)) || fromRouteId === 'M' && M_TRAIN_SHUFFLE.includes(stationId);
+    })
+    // return false;
+  }
+
+  function calculateOffsets() {
+    // if (!this.mapLoaded) {
+    //   this.map.on('load', () => {
+    //     this.calculateOffsets();
+    //   });
+    //   return;
+    // }
+
+    const _offsets = {};
+    const _results = {};
+    const offsetsMap = [0, -2, 2, -4, 4, -6, 6];
+
+    routeIds.forEach((train) => {
+      let offset = 0;
+      let conflictingOffsets = new Set();
+      const stops = routeStops.value[train];
+
+      if (!stops) {
+        return;
+      }
+
+      stops.forEach((stop) => {
+        stations.value[stop]["stops"].forEach((route) => {
+          if (_offsets[route] != undefined) {
+            let offsetToUse = _offsets[route];
+            if (shouldReverseDirection(train, route, stop)) {
+              if (offsetToUse > 0) {
+                if (offsetToUse % 2 === 1) {
+                  offsetToUse++;
+                } else {
+                  offsetToUse--;
+                }
+              }
+            }
+            conflictingOffsets.add(offsetToUse);
+          }
+        });
+      });
+
+      while(conflictingOffsets.has(offset)) {
+        offset++;
+      }
+
+      _offsets[train] = offset;
+    });
+    // console.log(_offsets)
+
+    Object.keys(_offsets).forEach((key) => {
+      _results[key] = offsetsMap[_offsets[key]]
+    });
+    offsets.value = _results
+    // console.log(_results)
+  }
+
+
 
   function processRoutings() {
     Object.keys(stationData).forEach((key) => {
@@ -243,6 +324,7 @@ export const useMapStore = defineStore('goodservice', () => {
   async function getRoutesGeoJson() {
     await updateData()
     processRoutings()
+    calculateOffsets()
 
     let routesGeoJson = {}
     Object.keys(trains.value).forEach((key) => {
@@ -257,12 +339,14 @@ export const useMapStore = defineStore('goodservice', () => {
       })
       // console.log(geojson)
 
+      // console.log(key)
+      // console.log(offsets.value)
       const route = trains.value[key]
       const geojson = {
         type: 'Feature',
         properties: {
           color: route.color,
-          // "offset": offsets[key],
+          offset: offsets.value[key],
           opacity: 1
         },
         geometry: {
