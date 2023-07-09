@@ -2,6 +2,8 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import axios from 'axios'
 
+import * as turf from '@turf/turf'
+
 const apiUrl = 'https://www.goodservice.io/api/routes/?detailed=1'
 const stopsUrl = 'https://www.goodservice.io/api/stops/'
 
@@ -255,6 +257,9 @@ export const useMapStore = defineStore('goodservice', () => {
       }
     })
     stops.value = _stops
+
+    processRoutings()
+    calculateOffsets()
   }
 
   function findPath(start, end, stepsTaken, stopsVisited) {
@@ -321,11 +326,10 @@ export const useMapStore = defineStore('goodservice', () => {
     return path
   }
 
-  async function getRoutesGeoJson() {
-    await updateData()
-    processRoutings()
-    calculateOffsets()
-
+  async function getRoutesGeoJson(refreshData) {
+    if (refreshData) {
+      await updateData()
+    }
     let routesGeoJson = {}
     Object.keys(trains.value).forEach((key) => {
       // console.log(`Rendering route ${key}...`)
@@ -359,5 +363,190 @@ export const useMapStore = defineStore('goodservice', () => {
     return routesGeoJson
   }
 
-  return { getRoutesGeoJson }
+  function calculateTrainPositions(currentTime) {
+    const _trains = trains.value
+    const _routingByDirection = routingByDirection.value
+    const trainPositions = [];
+
+    Object.keys(_trains).forEach((routeId) => {
+      const arrivalInfo = _trains[routeId].trips;
+
+      if (!arrivalInfo) {
+        return;
+      }
+
+      ['north', 'south'].forEach((direction) => {
+        const fullRoutings = _routingByDirection[routeId] && _routingByDirection[routeId][direction];
+        const trainArrivals = arrivalInfo[direction] || [];
+
+        if (!fullRoutings) {
+          return;
+        }
+
+        trainArrivals.forEach((arr) => {
+          let previousStation;
+          let nextStation;
+          let previousStationEstimatedTime;
+          let nextStationEstimatedTime;
+          const sortedStops = Object.keys(arr.stops).sort((a, b) => arr.stops[a] - arr.stops[b]);
+
+          if (arr.is_delayed) {
+            previousStation = arr.last_stop_made;
+            const previousStationIndex = previousStation && sortedStops.indexOf(previousStation);
+            nextStation = previousStation && sortedStops[previousStationIndex + 1];
+
+            if (!nextStation || !previousStation) {
+              return;
+            }
+            previousStationEstimatedTime = arr.stops[previousStation];
+            nextStationEstimatedTime = Math.max(arr.stops[nextStation], currentTime + 60);
+
+          } else {
+            nextStation = sortedStops.find((key) => arr.stops[key] > currentTime && stations[key]);
+            nextStationEstimatedTime = arr.stops[nextStation];
+
+            const precedingStations = sortedStops.slice(0, sortedStops.indexOf(nextStation)).reverse();
+            previousStation = precedingStations.find((key) => arr.stops[key] <= currentTime && stations[key]);
+            previousStationEstimatedTime = arr.stops[previousStation];
+
+            if (!previousStation) {
+              const nextId = nextStation;
+              if (fullRoutings.some((r) => r[0] === nextId)) {
+                return;
+              }
+
+              const matchedRouting = fullRoutings.find((r) => r.includes(nextId))
+              if (!matchedRouting) {
+                return;
+              }
+
+              const precedingStops = matchedRouting.slice(0, matchedRouting.indexOf(nextId)).reverse();
+              previousStation = precedingStops.find((stop) => stations[stop]);
+              let timeDiff = (nextStationEstimatedTime - currentTime) * 2;
+              timeDiff = (timeDiff < 420) ? 420 : timeDiff;
+              previousStationEstimatedTime = nextStationEstimatedTime - timeDiff;
+            }
+          }
+
+          if (!nextStation || !previousStation) {
+            return;
+          }
+
+          const next = {
+            stop_id: nextStation,
+            estimated_time: nextStationEstimatedTime,
+          };
+
+          const prev = {
+            stop_id: previousStation,
+            estimated_time: previousStationEstimatedTime,
+          }
+
+
+          trainPositions.push({
+            route: routeId,
+            routeName: _trains[routeId].name,
+            id: arr.id,
+            direction: direction,
+            delayed: arr.is_delayed,
+            prev: prev,
+            next: next
+          });
+        });
+      });
+    })
+
+    return trainPositions;
+  }
+
+  function routingGeoJson(routing) {
+    const r = routing.slice(0);
+
+    let path = []
+    let prev = r.splice(0, 1)[0];
+
+    r.forEach((stopId, index) => {
+      let tempPath = [];
+      tempPath.push([stations[prev].longitude, stations[prev].latitude]);
+      let potentialPath = findPath(prev, stopId, 0, []);
+      if (potentialPath) {
+        potentialPath.forEach((coord) => {
+          tempPath.push(coord);
+        });
+      }
+      if (stations[stopId]) {
+        tempPath.push([stations[stopId].longitude, stations[stopId].latitude]);
+        path = path.concat(tempPath);
+
+        prev = stopId;
+      }
+    });
+
+    return path;
+  }
+
+  async function getTrainPositionsGeoJson(refreshData) {
+    const trainPositionsObj = {};
+    if (refreshData) {
+      await updateData()
+    }
+
+    const currentTime = Date.now() / 1000
+    const trainPositions = calculateTrainPositions(currentTime)
+
+    const geojson = {
+      "type": "FeatureCollection",
+      "features": trainPositions.map((pos) => {
+        const prev = pos.prev.stop_id;
+        const next = pos.next.stop_id;
+        const array = pos.direction === 'north' ? [prev, next] : [next, prev];
+        const geoJson = routingGeoJson(array);
+        const lineSegment = turf.helpers.lineString(pos.direction === 'north' ? geoJson : geoJson.reverse());
+        const lineLength = turf.length(lineSegment);
+        const diffTime = pos.next.estimated_time - pos.prev.estimated_time;
+        const progress = (currentTime - pos.prev.estimated_time) / diffTime;
+        const estimatedDistanceTraveled = progress * lineLength;
+        const feature = turf.along(lineSegment, estimatedDistanceTraveled);
+        const pointAhead = turf.along(lineSegment, estimatedDistanceTraveled + 0.01);
+        const bearing = turf.bearing(
+          turf.helpers.point(feature.geometry.coordinates), turf.helpers.point(pointAhead.geometry.coordinates)
+        );
+        // const bearingInRads = (bearing - this.map.getBearing()) * (Math.PI / 180);
+        const textColor = trains.value[pos.route].color.toLowerCase() === '#fbbd08' ? '#000000' : '#ffffff';
+        // let visibility = false;
+
+        // if ((this.selectedTrip && this.selectedTrip.id === pos.id) || this.selectedTrains.includes(pos.route)) {
+        //   visibility = true;
+        // }
+        let textRotate = 0;
+
+        // if (pos.routeName.endsWith('X')) {
+        //   textRotate = (bearing + 225) % 90 - 45 - this.map.getBearing();
+        // }
+
+        trainPositionsObj[pos.id] = feature.geometry.coordinates;
+
+        feature.properties = {
+          "route": pos.routeName.endsWith('X') ? pos.routeName[0] : pos.routeName,
+          "routeId": pos.route,
+          "tripId": pos.id,
+          "direction": pos.direction,
+          "color": trains.value[pos.route].color,
+          "icon": pos.routeName.endsWith('X') ? `train-pos-x-${trains.value[pos.route].color.slice(1).toLowerCase()}` : `train-pos-${trains.value[pos.route].color.slice(1).toLowerCase()}`,
+          "text-color": textColor,
+          "alternate-text-color": (pos.delayed) ? '#ff0000' : textColor,
+          "halo-width": (pos.delayed) ? 1 : 0,
+          "bearing": bearing,
+          "text-rotate": textRotate,
+          // "offset": [Math.sin(bearingInRads) * -0.3, Math.cos(bearingInRads) * 0.3],
+          // "visibility": visibility,
+        }
+
+        return feature;
+      })
+    }
+    return geojson
+  }
+
+  return { updateData, getRoutesGeoJson, getTrainPositionsGeoJson }
 })

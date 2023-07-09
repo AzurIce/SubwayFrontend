@@ -2,12 +2,12 @@
 import router from '../router/index'
 import { onMounted } from 'vue'
 
-let map = null
+// let map = null
 
-import { getData } from '../lib/gtfs/gtfs'
+// import { getData } from '../lib/gtfs/gtfs'
 // import axios from 'axios';
 // import stops_data from './stops.json'
-import stops_data from '../assets/stops.json'
+// import stops_data from '../assets/stops.json'
 
 // console.log(stops_data)
 import { useTokenStore } from '../stores/token'
