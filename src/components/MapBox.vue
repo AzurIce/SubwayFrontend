@@ -2,6 +2,7 @@
 import mapboxgl from 'mapbox-gl' // or "const mapboxgl = require('mapbox-gl');"
 import 'mapbox-gl/dist/mapbox-gl.css'
 import { onMounted } from 'vue'
+// import { timeCount, timeCountAsync} from '../lib/utils'
 
 import { useMapStore } from '../stores/goodservice'
 import { ref } from 'vue'
@@ -9,7 +10,7 @@ import { ref } from 'vue'
 const mapStore = useMapStore()
 
 mapboxgl.accessToken =
-  'pk.eyJ1IjoiYXp1cmljZSIsImEiOiJjbGpwMnQxcXIxYTNpM2VvNmo0OG14cm1xIn0.dc0RFy9AhS-sxmtnvdI4Qw'
+  'pk.eyJ1IjoiYXp1cmljZSIsImEiOiJjbGp3NmM5OHkwOWdxM2Vwa2Jjb2tjdzZnIn0.-Ohkio-ahwFWJT3BcckSuA'
 let map = null
 
 async function updateRoutes() {
@@ -105,6 +106,7 @@ async function updateTrainPositions() {
       },
       "paint": {
         "text-color": ['get', 'text-color'],
+        "icon-color": ['get', 'icon-color'],
         "text-color-transition": {
           "duration": 500,
         },
@@ -146,8 +148,10 @@ let trainPosInterval
 function initMap() {
   map = new mapboxgl.Map({
     container: 'map', // container ID
-    // style: 'mapbox://styles/mapbox/dark-v10', // style URL
-    style: 'mapbox://styles/theweekendest/ck1fhati848311cp6ezdzj5cm?optimize=true', // style URL
+    style: 'mapbox://styles/mapbox/dark-v10', // style URL
+    // style: 'mapbox://styles/azurice/cljw59k7o01y801qyfynd787k', // style URL
+    // style: 'mapbox://styles/azurice/cljw59k7o01y801qyfynd787k/draft', // style URL
+    // style: 'mapbox://styles/theweekendest/ck1fhati848311cp6ezdzj5cm?optimize=true', // style URL
     // center: [-73.904496, 40.720449], // starting position [lng, lat]
     maxBounds: [
       [-74.309883, 40.48388],
@@ -158,6 +162,11 @@ function initMap() {
 
 
   map.on('load', async () => {
+    map.loadImage('train.png', (error, image) => {
+      if (error) throw error;
+      map.addImage('train', image, { 'sdf': true });
+    })
+    
     console.log('load')
     map.addSource('stop', {
       type: 'geojson',
@@ -168,7 +177,6 @@ function initMap() {
       type: 'circle',
       source: 'stop',
       paint: {
-        // 'circle-pitch-scale': 'map',
         'circle-color': '#dddddd',
         'circle-opacity': 0.3,
         'circle-radius': 4

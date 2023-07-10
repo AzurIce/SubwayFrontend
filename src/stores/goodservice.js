@@ -2,6 +2,8 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import axios from 'axios'
 
+import { timeCount } from '../lib/utils'
+
 import * as turf from '@turf/turf'
 
 const apiUrl = 'https://www.goodservice.io/api/routes/?detailed=1'
@@ -61,16 +63,9 @@ export const useMapStore = defineStore('goodservice', () => {
       const triggerStation = STATIONS_TO_FLIP_DIRECTIONS[targetStation];
       return (stationId === targetStation && stations[triggerStation].stops.has(fromRouteId) !== stations[triggerStation].stops.has(toRouteId)) || fromRouteId === 'M' && M_TRAIN_SHUFFLE.includes(stationId);
     })
-    // return false;
   }
 
   function calculateOffsets() {
-    // if (!this.mapLoaded) {
-    //   this.map.on('load', () => {
-    //     this.calculateOffsets();
-    //   });
-    //   return;
-    // }
 
     const _offsets = {};
     const _results = {};
@@ -117,8 +112,6 @@ export const useMapStore = defineStore('goodservice', () => {
     offsets.value = _results
     // console.log(_results)
   }
-
-
 
   function processRoutings() {
     Object.keys(stationData).forEach((key) => {
@@ -190,14 +183,15 @@ export const useMapStore = defineStore('goodservice', () => {
         let prevTrains = []
 
         route.forEach((stop) => {
-          const stopData = stops[stop]
+          const stopData = stops.value[stop]
+          // console.log('stopData: ', stopData)
 
           if (!stopData) {
             return
           }
 
-          const trains = Object.keys(stops[stop].routes).flatMap((r) =>
-            stops[stop].routes[r].map((d) => `${r}-${d}`)
+          const trains = Object.keys(stops.value[stop].routes).flatMap((r) =>
+            stops.value[stop].routes[r].map((d) => `${r}-${d}`)
           )
 
           if (prevStop) {
@@ -366,13 +360,12 @@ export const useMapStore = defineStore('goodservice', () => {
   function calculateTrainPositions(currentTime) {
     const _trains = trains.value
     const _routingByDirection = routingByDirection.value
-    const trainPositions = [];
+    let trainPositions = [];
 
-    Object.keys(_trains).forEach((routeId) => {
+    for (const routeId in _trains) {
       const arrivalInfo = _trains[routeId].trips;
-
       if (!arrivalInfo) {
-        return;
+        continue;
       }
 
       ['north', 'south'].forEach((direction) => {
@@ -454,7 +447,7 @@ export const useMapStore = defineStore('goodservice', () => {
           });
         });
       });
-    })
+    }
 
     return trainPositions;
   }
@@ -493,6 +486,7 @@ export const useMapStore = defineStore('goodservice', () => {
 
     const currentTime = Date.now() / 1000
     const trainPositions = calculateTrainPositions(currentTime)
+    // console.log(trainPositions)
 
     const geojson = {
       "type": "FeatureCollection",
@@ -526,13 +520,16 @@ export const useMapStore = defineStore('goodservice', () => {
 
         trainPositionsObj[pos.id] = feature.geometry.coordinates;
 
+        // console.log(trains.value[pos.route].color.slice(1).toLowerCase())
         feature.properties = {
           "route": pos.routeName.endsWith('X') ? pos.routeName[0] : pos.routeName,
           "routeId": pos.route,
           "tripId": pos.id,
           "direction": pos.direction,
           "color": trains.value[pos.route].color,
-          "icon": pos.routeName.endsWith('X') ? `train-pos-x-${trains.value[pos.route].color.slice(1).toLowerCase()}` : `train-pos-${trains.value[pos.route].color.slice(1).toLowerCase()}`,
+          // "icon": pos.routeName.endsWith('X') ? `train-pos-x-${trains.value[pos.route].color.slice(1).toLowerCase()}` : `train-pos-${trains.value[pos.route].color.slice(1).toLowerCase()}`,
+          "icon": 'train',
+          "icon-color": trains.value[pos.route].color,
           "text-color": textColor,
           "alternate-text-color": (pos.delayed) ? '#ff0000' : textColor,
           "halo-width": (pos.delayed) ? 1 : 0,
