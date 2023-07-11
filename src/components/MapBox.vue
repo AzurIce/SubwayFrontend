@@ -1,12 +1,11 @@
 <script setup>
+// MapBox GLJS API
 import mapboxgl from 'mapbox-gl' // or "const mapboxgl = require('mapbox-gl');"
 import 'mapbox-gl/dist/mapbox-gl.css'
-import { onMounted } from 'vue'
-// import { timeCount, timeCountAsync} from '../lib/utils'
+
+import { onMounted, ref } from 'vue'
 
 import { useMapStore } from '../stores/goodservice'
-import { ref } from 'vue'
-
 const mapStore = useMapStore()
 
 mapboxgl.accessToken =
@@ -145,6 +144,7 @@ async function updateData() {
 
 const selectedId = ref('')
 
+const overlay = ref(true)
 function initMap() {
   map = new mapboxgl.Map({
     container: 'map',
@@ -163,7 +163,7 @@ function initMap() {
       map.addImage('train', image, { 'sdf': true });
     })
 
-    console.log('load')
+    // Stop
     map.addSource('stop', {
       type: 'geojson',
       data: 'stations.geojson'
@@ -178,56 +178,42 @@ function initMap() {
         'circle-radius': 4
       }
     })
+
+    // Choosing stop
     map.on('click', 'stop', (e) => {
       console.log(`clicked ${e.features[0].properties.id}`)
       selectedId.value = e.features[0].properties.id
     });
 
-    // Change the cursor to a pointer when the mouse is over the stop layer.
+    // Cursor changing
     map.on('mouseenter', 'stop', () => {
       map.getCanvas().style.cursor = 'pointer';
     });
-
-    // Change it back to a pointer when it leaves.
     map.on('mouseleave', 'stop', () => {
       map.getCanvas().style.cursor = '';
     });
     await allUpdate()
     overlay.value = false
-
-    // dataInterval = setInterval(() => {
-    //   updateData()
-    // }, 2500)
-
-    // trainPosInterval = setInterval(() => {
-    //   updateTrainPositions()
-    // }, 50)
   })
 }
 
-onMounted(async () => {
-  initMap()
-})
-const autoUpdate = ref(false)
+onMounted(initMap)
 
 import StationInfo from '../components/StationInfo.vue'
 
+const autoUpdate = ref(false)
 let dataInterval = 0
 let trainPosInterval = 0
 function switchRealtime(res) {
-  console.log(res)
   if (res) {
-    console.log('setInterval')
     dataInterval = setInterval(updateData, 2500)
     trainPosInterval = setInterval(updateTrainPositions, 50)
   } else {
-    console.log('clearInterval')
     clearInterval(dataInterval)
     clearInterval(trainPosInterval)
   }
 }
 
-const overlay = ref(true)
 </script>
 
 <template>
@@ -240,7 +226,7 @@ const overlay = ref(true)
   <div class="tw-h-full tw-relative">
     <div class="tw-flex tw-flex-col tw-bg-white tw-rounded tw-absolute tw-z-10 tw-m-4 tw-p-4 tw-shadow">
       <div clas="tw-flex">
-        <v-btn icon="mdi-refresh" @click="allUpdate" :loading="loading" inline/>
+        <v-btn icon="mdi-refresh" @click="allUpdate" :loading="loading" inline />
         <v-switch label="实时更新" v-model="autoUpdate" @update:modelValue="switchRealtime"></v-switch>
       </div>
       <!-- {{ selectedId }} -->

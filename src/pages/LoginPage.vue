@@ -69,6 +69,7 @@ function onLogin() {
     console.log(res)
     console.log(res.data.data.token)
     tokenStore.setToken(res.data.data.token)
+    tokenStore.setPermission(res.data.data.permission)
     // onLoggedIn()
     router.push('/')
   }).catch((err) => {

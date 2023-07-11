@@ -3,6 +3,7 @@ import { defineStore } from 'pinia'
 
 export const useTokenStore = defineStore('token', () => {
     const token = ref(window.localStorage.getItem('xxqToken'))
+    const permissionLevel = ref(window.localStorage.getItem('xxqPermission'))
 
     const isLoggedIn = computed(() => token.value)
     function setToken(_token) {
@@ -13,6 +14,9 @@ export const useTokenStore = defineStore('token', () => {
         token.value = ''
         window.localStorage.setItem('xxqToken', '')
     }
+    function setPermission(permission) {
+        permissionLevel.value = permission
+    }
 
-    return { token, isLoggedIn, setToken, unSetToken }
+    return { token, isLoggedIn, setToken, unSetToken, setPermission, permissionLevel }
 })

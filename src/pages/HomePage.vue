@@ -1,6 +1,4 @@
 <script setup>
-import router from '../router/index'
-import { ref } from 'vue'
 
 // let map = null
 

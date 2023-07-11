@@ -18,7 +18,8 @@
             </v-card>
           </v-dialog>
       </v-btn>
-      <v-btn icon="mdi-poll"></v-btn>
+      <v-btn icon="mdi-currency-usd" @click="() => {donateDialog = true}" />
+      <v-btn icon="mdi-poll" @click="onCountIT()"></v-btn>
       <v-btn icon="mdi-exit-run" @click="onLogout()"></v-btn>
     </v-app-bar>
 </template>
@@ -37,6 +38,11 @@ function onLogout() {
   tokenStore.unSetToken()
   router.push('/login')
 }
+
+//count
+function onCountIT(){
+    router.push('/count')
+}  
 
 </script>
 
