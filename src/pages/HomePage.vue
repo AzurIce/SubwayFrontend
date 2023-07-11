@@ -1,26 +1,16 @@
 <script setup>
+import { ref } from 'vue'
+import router from '../router/index'
+import { useTokenStore } from '../stores/token'
+const tokenStore = useTokenStore()
 
-// let map = null
+function onLogout() {
+  tokenStore.unSetToken()
+  router.push('/login')
+}
 
-// import { getData } from '../lib/gtfs/gtfs'
-// import axios from 'axios';
-// import stops_data from './stops.json'
-// import stops_data from '../assets/stops.json'
-// console.log(stops_data)
-
-
-// onMounted(() => {
-//   setTimeout(() => (dialog.value = false), 2500)
-// })
-// -73.913192,40.903221
-// -73.764864,40.533469
-
-
-// async function onGetData() {
-//   const geojson = getData()
-// }
 import MapBox from '../components/MapBox.vue'
-import NavigationBar from '../components/NavigationBar.vue';
+const donateDialog = ref(false)
 </script>
 
 <template>

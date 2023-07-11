@@ -10,7 +10,7 @@ async function getTimeRange() {
 }
 
 async function _getTrueData(time, id) {
-    const res = await get(`/true/ai?dateTime=${time}&GTFSid=${id}`)
+    const res = await get(`/true/at?dateTime=${time}&GTFSid=${id}`)
     return res
 }
 
@@ -34,7 +34,21 @@ function rand() {
 function parseTime(time) {
     // console.log(time)
     // console.log(time.getMonth())
-    return `${time.getFullYear()}-${time.getMonth() + 1}-${time.getDate()} ${time.getHours()}:00:00`
+    let month = time.getMonth() + 1
+    if (month < 10) {
+        month = `0${month}`
+    } else {
+        month = `${month}`
+    }
+
+    let hour = time.getHours()
+    if (hour < 10) {
+        hour = `0${hour}`
+    } else {
+        hour = `${hour}`
+    }
+
+    return `${time.getFullYear()}-${month}-${time.getDate()} ${hour}:00:00`
 }
 
 export async function getData(id) {
@@ -49,28 +63,32 @@ export async function getData(id) {
         let time = new Date(date)
         time.setHours(time.getHours() + i * 4)
         // console.log(time)
-        // const res = await _getTrueData(`${time.getFullYear}-${time.getMonth}-${time.getDate} ${time.getHours}:00:00`, id)
-        // result.push(res.data)
-        result.push({
-            dateTime: parseTime(time),
-            tExits: rand(),
-            GTFS_Stop_ID: id,
-            tEntries: rand()
-        })
+        const res = await _getTrueData(parseTime(time), id)
+        // console.log(parseTime(time), id)
+        // console.log(res)
+        result.push(res.data.data[0])
+        // result.push({
+        //     dateTime: parseTime(time),
+        //     tExits: rand(),
+        //     GTFS_Stop_ID: id,
+        //     tEntries: rand()
+        // })
     }
     
     for (let i = 1; i <= 3; i++) {
         let time = new Date(date)
         time.setHours(time.getHours() + i * 4)
         // console.log(time)
-        // const res = await _getTrueData(`${time.getFullYear}-${time.getMonth}-${time.getDate} ${time.getHours}:00:00`, id)
-        // result.push(res.data)
-        result.push({
-            dateTime: parseTime(time),
-            tExits: rand(),
-            GTFS_Stop_ID: id,
-            tEntries: rand()
-        })
+        const res = await _getTrueData(parseTime(time), id)
+        // console.log(parseTime(time), id)
+        // console.log(res)
+        result.push(res.data.data[0])
+        // result.push({
+        //     dateTime: parseTime(time),
+        //     tExits: rand(),
+        //     GTFS_Stop_ID: id,
+        //     tEntries: rand()
+        // })
     }
     return result
 }

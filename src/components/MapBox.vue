@@ -143,7 +143,6 @@ async function updateData() {
 
 
 const selectedId = ref('')
-
 const overlay = ref(true)
 function initMap() {
   map = new mapboxgl.Map({
@@ -230,9 +229,10 @@ function switchRealtime(res) {
         <v-switch label="实时更新" v-model="autoUpdate" @update:modelValue="switchRealtime"></v-switch>
       </div>
       <!-- {{ selectedId }} -->
+      <!-- 我们在加载的时候显示旋转动画 -->
       <StationInfo v-model="selectedId" />
     </div>
-    <div id="map" class="tw-h-full tw-w-full" />
+    <div id="map" class="tw-h-full tw-w-full" style="width: 100vw;height: 100vh;"/>
   </div>
 </template>
 

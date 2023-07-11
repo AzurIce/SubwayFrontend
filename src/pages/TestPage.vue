@@ -12,7 +12,7 @@ onMounted(async () => {
     myChart = echarts.init(chart.value);
   }
 
-  let res = await getData()
+  let res = await getData('R01')
   console.log(res)
 
   // 绘制图表
