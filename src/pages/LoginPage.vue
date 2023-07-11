@@ -1,5 +1,6 @@
 <script setup>
 // import TheWelcome from '../components/TheWelcome.vue'
+import LoginClickEffect  from '../components/LoginClickEffect.vue' //click special effect
 
 import { login, register, sendCode } from '../lib/axios/user'
 import { reactive, ref } from 'vue'
@@ -99,6 +100,7 @@ function onLogin() {
 
 <template>
   <div class="bigContiner">
+    <LoginClickEffect></LoginClickEffect> <!--click on special effect-->
     <v-snackbar v-model="snackbar">
       {{ snackbarText }}
 
