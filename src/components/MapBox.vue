@@ -216,6 +216,8 @@ onMounted(async () => {
   initMap()
 })
 const autoUpdate = ref(true)
+
+import StationInfo from '../components/StationInfo.vue'
 </script>
 
 <template>
@@ -240,10 +242,8 @@ const autoUpdate = ref(true)
           }
         }"></v-switch>
       </div>
-      <div v-if="selectedId != ''">
-        <v-btn icon="mdi-arrow-left-thin" @click="() => { selectedId = '' }" />
-        {{ selectedId }}
-      </div>
+      <!-- {{ selectedId }} -->
+      <StationInfo v-model="selectedId"/>
     </div>
     <div id="map" class="tw-h-full tw-w-full" />
   </div>

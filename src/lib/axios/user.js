@@ -1,8 +1,5 @@
 import {get, post} from './axios'
 
-
-// http://753p8745p2.zicp.fun:43620/user/login
-
 export function login(username, password) {
     return post(`/user/login`, {
         uname: username,
