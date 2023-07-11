@@ -122,7 +122,7 @@ async function updateTrainPositions() {
     //   blink = !blink;
     // }, 1000);
   }
-    map.moveLayer('TrainPositions', null)
+  map.moveLayer('TrainPositions', null)
 }
 
 
@@ -145,6 +145,10 @@ async function updateData() {
 let dataInterval
 let trainPosInterval
 
+
+const selectedId = ref('')
+
+
 function initMap() {
   map = new mapboxgl.Map({
     container: 'map', // container ID
@@ -166,7 +170,7 @@ function initMap() {
       if (error) throw error;
       map.addImage('train', image, { 'sdf': true });
     })
-    
+
     console.log('load')
     map.addSource('stop', {
       type: 'geojson',
@@ -174,17 +178,28 @@ function initMap() {
     })
     map.addLayer({
       id: 'stop',
-      type: 'symbol',
+      type: 'circle',
       source: 'stop',
-      'layout': {
-        'icon-image': '',
-      },
       paint: {
         'circle-color': '#dddddd',
-        'circle-opacity': 0.3,
+        'circle-opacity': 0.7,
         'circle-radius': 4
       }
     })
+    map.on('click', 'stop', (e) => {
+      console.log(`clicked ${e.features[0].properties.id}`)
+      selectedId.value = e.features[0].properties.id
+    });
+
+    // Change the cursor to a pointer when the mouse is over the stop layer.
+    map.on('mouseenter', 'stop', () => {
+      map.getCanvas().style.cursor = 'pointer';
+    });
+
+    // Change it back to a pointer when it leaves.
+    map.on('mouseleave', 'stop', () => {
+      map.getCanvas().style.cursor = '';
+    });
     allUpdate()
 
     dataInterval = setInterval(() => {
@@ -224,6 +239,10 @@ const autoUpdate = ref(true)
             clearInterval(trainPosInterval)
           }
         }"></v-switch>
+      </div>
+      <div v-if="selectedId != ''">
+        <v-btn icon="mdi-arrow-left-thin" @click="() => { selectedId = '' }" />
+        {{ selectedId }}
       </div>
     </div>
     <div id="map" class="tw-h-full tw-w-full" />
