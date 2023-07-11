@@ -4,7 +4,8 @@ import LoginClickEffect from '../components/LoginClickEffect.vue' //click specia
 
 import { login, register, sendCode } from '../lib/axios/user'
 import { reactive, ref } from 'vue'
-import router from '../router/index'
+import { useRouter } from 'vue-router'
+const router = useRouter()
 
 import { useTokenStore } from '../stores/token'
 const tokenStore = useTokenStore()
@@ -21,83 +22,64 @@ const state = reactive({
   token: ''
 })
 
-const rulesUsername = [
-  value => {
-    if (value) return true
-
-    return '用户名不能为空.'
-  },
-]
-
-const rulesEmail = [
-  value => {
-    if (value) return true
-
-    return '邮箱不能为空.'
-  },
-]
-
-const rulesCode = [
-  value => {
-    if (value) return true
-
-    return '验证码不能为空.'
-  },
-]
-
-const rulesPassword = [
-  value => {
-    if (value) return true
-
-    return '密码不能为空.'
-  },
-]
-
-const rulesRepeatPassword = [
-  value => {
-    if (value == state.password) return true
-
-    return '两次密码不一致.'
-  },
-]
-
 const tab = ref('login')
 
 function switchTab() {
   tab.value = tab.value == 'login' ? 'register' : 'login'
 }
+
+const sendingCode = ref(false)
 function onSendCode() {
-  console.log('> onSendCode')
+  // console.log('> onSendCode')
+  sendingCode.value = true
   sendCode(state.email).then((res) => {
+    showSnackBar('验证码已发送')
     console.log(res)
     state.token = res.data.data
   }).catch((err) => {
+    showSnackBar(`验证码发送失败：${err}`)
     console.log(err)
+  }).finally(() => {
+    sendingCode.value = false
   })
 }
+
+const registering = ref(false)
 function onRegister() {
-  console.log('> onRegister')
+  // console.log('> onRegister')
+  registering.value = true
   register(state.email, state.token, state.code, state.username, state.password).then((res) => {
+    showSnackBar('注册成功')
     console.log(res)
   }).catch((err) => {
+    showSnackBar(`注册失败：${err}`)
     console.log(err)
+  }).finally(() => {
+    registering.value = false
   })
-  // TODO: Register logic
 }
+
+const loggingin = ref(false)
 function onLogin() {
-  console.log('> onLogin')
-  if (import.meta.env.DEV) {
-    router.push('/')
-    return
-  }
+  // console.log('> onLogin')
+  loggingin.value = true
+  // if (import.meta.env.DEV) {
+  //   loggingin.value = false
+  //   router.push('/')
+  //   return
+  // }
   login(state.username, state.password).then((res) => {
+    showSnackBar('登陆成功')
     console.log(res)
     console.log(res.data.data.token)
     tokenStore.setToken(res.data.data.token)
     // onLoggedIn()
     router.push('/')
   }).catch((err) => {
+    showSnackBar(`登陆失败：${err}`)
     console.log(err)
+  }).finally(() => {
+    loggingin.value = false
   })
 }
 const amountX = 50
@@ -118,6 +100,12 @@ let particles,
 let mouseX = 0;
 
 let windowHalfX = window.innerWidth / 2;
+
+function showSnackBar(msg) {
+  console.log('showSnackBar')
+  snackbar.value = true
+  snackbarText.value = msg
+}
 
 function init() {
   container = document.createElement("div");
@@ -248,7 +236,6 @@ function onWindowResize() {
 
 //监听鼠标移动事件
 function onPointerMove(event) {
-  // console.log(event);
   if (event.isPrimary === false) return;
   mouseX = event.clientX - windowHalfX;
 }
@@ -312,27 +299,30 @@ onMounted(() => {
           <v-sheet width="300" class="tw-mx-auto">
             <v-form @submit.prevent>
               <div class="flex" v-if="tab == 'register'">
-                <v-text-field v-model="state.email" :rules="rulesEmail" label="Email" />
-                <v-text-field v-model="state.code" :rules="rulesCode" label="Code">
+                <v-text-field v-model="state.email" :rules="[() => (state.email != '') || '邮箱不能为空.']" label="Email" />
+                <v-text-field v-model="state.code" :rules="[() => (state.code != '') || '验证码不能为空.']" label="Code">
                   <template #append>
-                    <v-btn color="white" @click="onSendCode">获取</v-btn>
+                    <v-btn color="white" @click="onSendCode" :loading="sendingCode">获取</v-btn>
                   </template>
                 </v-text-field>
               </div>
-              <v-text-field v-model="state.username" :rules="rulesUsername" label="Username" />
-              <v-text-field v-model="state.password" :rules="rulesPassword" label="Password" type="password" />
-              <v-text-field v-model="state.repeatPassword" :rules="rulesRepeatPassword" label="RepeatPassword"
+              <v-text-field v-model="state.username" :rules="[() => (state.username != '') || '用户名不能为空.']"
+                label="Username" />
+              <v-text-field v-model="state.password" :rules="[() => (state.password != '') || '密码不能为空.']" label="Password" type="password" />
+              <v-text-field v-model="state.repeatPassword" :rules="[() => (state.repeatPassword == state.password) || '密码不一致.']" label="RepeatPassword"
                 v-if="tab == 'register'" type="password" />
             </v-form>
             <div class="tw-flex tw-gap-2 tw-mt-2 tw-w-300 tw-justify-around">
               <v-btn @click="tab == 'login' ? onLogin() : switchTab()" :ripple="false"
                 :color="tab == 'login' ? 'blue' : 'white'" size="large" class="tw-flex-1"
-                :class="tab == 'login' ? 'basis-3/4' : 'basis-1/4'">
+                :class="tab == 'login' ? 'basis-3/4' : 'basis-1/4'"
+                :loading="loggingin">
                 登录
               </v-btn>
               <v-btn @click="tab == 'register' ? onRegister() : switchTab()" :ripple="false"
                 :color="tab == 'login' ? 'white' : 'blue'" size="large" class="tw-flex-1"
-                :class="tab == 'login' ? 'basis-1/4' : 'basis-3/4'">
+                :class="tab == 'login' ? 'basis-1/4' : 'basis-3/4'"
+                :loading="registering">
                 注册
               </v-btn>
             </div>
