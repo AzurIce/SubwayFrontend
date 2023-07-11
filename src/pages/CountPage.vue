@@ -7,7 +7,8 @@
           <div class="top-box">区域1</div>
           <div class="top-box">区域2</div>
           <div class="top-box">区域3</div>
-          <div class="top-box">区域4</div>
+          <!-- <div class="top-box">区域4</div> -->
+          <Star class="top-box"></Star>
         </div>
         <v-divider :thickness="3" class="border-opacity-75" color="info"></v-divider>
         <div class="bottom-section">
@@ -71,10 +72,13 @@
 <script>
 import ApexCharts from 'apexcharts'
 import NavigationBar from '../components/NavigationBar.vue'
+import Star from '../components/Star.vue'
+
 export default {
   name: 'DataAnalysisDashboard',
   components: {
-    NavigationBar
+    NavigationBar,
+    Star
   },
   mounted() {
     const inputTime = {

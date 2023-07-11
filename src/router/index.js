@@ -9,6 +9,7 @@ import AdminPage from '../pages/AdminPage.vue'
 import {useTokenStore} from '../stores/token'
 
 
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -44,6 +45,15 @@ const router = createRouter({
         requireAuth: true,
       },
       component: TestPage
+    },
+    {
+      path:'/star',
+      name:'star',
+      component:()=>import('../components/Star.vue')
+    },{
+      path:'/count',
+      name:'count',
+      component:CountPage
     }
   ]
 })
