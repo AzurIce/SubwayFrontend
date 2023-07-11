@@ -80,6 +80,6 @@ onUpdated(() => {
       {{ station.latitude }}
     </div>
     <!-- <v-progress-circular color="white" indeterminate size="64" v-if="loading">🫠</v-progress-circular> -->
-    <div ref="chart" class="tw-h-80 tw-w-80" />
+    <div ref="chart" class="tw-h-80 tw-w-80" style="width: 40vw;"/>
   </div>
 </template>
