@@ -26,6 +26,10 @@ const router = createRouter({
       path: '/about',
       name: 'about',
       component: AboutPage
+    },{
+      path:'/heat',
+      name:'heat',
+      component:()=> import ('../components/HeatMap.vue')
     }
   ]
 })

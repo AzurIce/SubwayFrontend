@@ -29,8 +29,8 @@
     }
   
     const handleClick = (event) => {
-      const x = event.clientX - 20 + 'px'
-      const y = event.clientY - 20 + 'px'
+      const x = event.clientX - 7 + 'px'
+      const y = event.clientY - 7 + 'px'
       const color = getRandomColor()
       const effect = { id: Date.now(), x, y, color }
   
