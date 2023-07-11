@@ -4,7 +4,7 @@ export function login(username, password) {
     return post(`/user/login`, {
         uname: username,
         pwd: password
-    })
+    }, false)
 }
 
 

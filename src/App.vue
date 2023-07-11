@@ -7,11 +7,13 @@
 </script>
 
 <template>
-  <!-- <div class="flex flex-col"> -->
+  <div class="tw-flex tw-flex-col tw-w-full tw-h-full tw-items-center tw-justify-center">
+
+    <!-- <div class="flex flex-col"> -->
     <!-- <span>{{ tokenStore.token }}</span> -->
     <RouterView />
-  <!-- </div> -->
+    <!-- </div> -->
+  </div>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>

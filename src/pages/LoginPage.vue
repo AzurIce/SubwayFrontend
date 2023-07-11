@@ -64,6 +64,10 @@ function onLogin() {
   //   router.push('/')
   //   return
   // }
+
+  // 1 普通
+  // 2 企业
+  // 3 管理员
   login(state.username, state.password).then((res) => {
     msg.value = '登陆成功'
     console.log(res)

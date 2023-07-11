@@ -27,6 +27,7 @@ const donateDialog = ref(false)
   </v-dialog>
   <v-layout class="tw-h-full">
     <v-app-bar :elevation="2" title="地铁客流量预测系统">
+      <v-btn class="tw-text-purple" v-if="tokenStore.isAdmin()" @click="() => { router.push('/admin') }">管理</v-btn>
       <v-btn icon="mdi-currency-usd" @click="() => { donateDialog = true }" />
       <v-btn icon="mdi-poll" @click="() => { router.push('/test') }"></v-btn>
       <v-btn icon="mdi-exit-run" @click="onLogout()"></v-btn>

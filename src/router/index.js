@@ -3,6 +3,7 @@ import LoginPage from '../pages/LoginPage.vue'
 import HomePage from '../pages/HomePage.vue'
 import AboutPage from '../pages/AboutPage.vue'
 import TestPage from '../pages/TestPage.vue'
+import AdminPage from '../pages/AdminPage.vue'
 
 import {useTokenStore} from '../stores/token'
 
@@ -30,12 +31,26 @@ const router = createRouter({
     },{
       path:'/heat',
       name:'heat',
+      meta: {
+        requireAuth: true,
+      },
       component:()=> import ('../components/HeatMap.vue')
     },
     {
       path: '/test',
       name: 'test',
+      meta: {
+        requireAuth: true,
+      },
       component: TestPage
+    },
+    {
+      path: '/admin',
+      name: 'admin',
+      meta: {
+        requireAuth: true,
+      },
+      component: AdminPage
     }
   ]
 })
