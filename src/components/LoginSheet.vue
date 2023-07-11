@@ -1,25 +1,3 @@
-<script setup>
-import { ref } from 'vue'
-
-const username = ref('')
-const password = ref('')
-
-const rulesUsername = [
-  value => {
-    if (value) return true
-
-    return '用户名不能为空.'
-  },
-]
-
-const rulesPassword = [
-  value => {
-    if (value) return true
-
-    return '密码不能为空.'
-  },
-]
-</script>
 
 <template>
     <v-sheet width="300" class="loginContiner mx-auto" v-if="tab == 'login'">

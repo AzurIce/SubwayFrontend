@@ -79,7 +79,7 @@ async function updateTrainPositions() {
   }
 
   if (!map.getLayer("TrainPositions")) {
-    let blink = false;
+    // let blink = false;
     map.addLayer({
       "id": "TrainPositions",
       "type": "symbol",
@@ -174,8 +174,11 @@ function initMap() {
     })
     map.addLayer({
       id: 'stop',
-      type: 'circle',
+      type: 'symbol',
       source: 'stop',
+      'layout': {
+        'icon-image': '',
+      },
       paint: {
         'circle-color': '#dddddd',
         'circle-opacity': 0.3,
