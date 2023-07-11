@@ -98,73 +98,81 @@ function onLogin() {
 </script>
 
 <template>
-  <v-snackbar v-model="snackbar">
-    {{ snackbarText }}
+  <div class="bigContiner">
+    <v-snackbar v-model="snackbar">
+      {{ snackbarText }}
 
-    <template v-slot:actions>
-      <v-btn color="pink" variant="text" @click="snackbar = false">
-        Close
-      </v-btn>
-    </template>
-  </v-snackbar>
+      <template v-slot:actions>
+        <v-btn color="pink" variant="text" @click="snackbar = false">
+          Close
+        </v-btn>
+      </template>
+    </v-snackbar>
 
 
-  <div class="lg:tw-grid lg:tw-grid-cols-2 lg:tw-p-8">
-    <header>
-      <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="200" height="200" />
+    <div class="lg:tw-grid lg:tw-grid-cols-2 lg:tw-p-8">
+      <header>
+        <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="200" height="200" />
 
-      <div class="wrapper">
-        <div class="greetings">
-          <h1 class="green tw-text-center lg:tw-text-left">地铁客流量预测系统</h1>
-          <h3 class="tw-text-center lg:tw-text-left">
-            <p>「虽是咸鱼，但也要挣扎」</p>
-            <p class="mt-2">
-              项目地址：
-              <a href="https://github.com/AzurIce/2023-BJTU-SummerPractice-Subway" target="_blank"
-                rel="noopener">Github</a>
-            </p>
-          </h3>
-        </div>
-
-        <nav>
-          <RouterLink to="/">Home</RouterLink>
-          <RouterLink to="/about">About</RouterLink>
-        </nav>
-      </div>
-    </header>
-    <main>
-      <div class="tw-flex tw-flex-col tw-gap-2">
-        <v-sheet width="300" class="tw-mx-auto">
-          <v-form @submit.prevent>
-            <div class="flex" v-if="tab == 'register'">
-              <v-text-field v-model="state.email" :rules="rulesEmail" label="Email" />
-              <v-btn @click="onSendCode()">获取验证码</v-btn>
-              <v-text-field v-model="state.code" :rules="rulesCode" label="Code" />
-            </div>
-            <v-text-field v-model="state.username" :rules="rulesUsername" label="Username" />
-            <v-text-field v-model="state.password" :rules="rulesPassword" label="Password" type="password" />
-            <v-text-field v-model="state.repeatPassword" :rules="rulesRepeatPassword" label="RepeatPassword"
-              v-if="tab == 'register'" type="password" />
-          </v-form>
-          <div class="tw-flex tw-gap-2 tw-mt-2 tw-w-300 tw-justify-around">
-            <v-btn @click="tab == 'login' ? onLogin() : switchTab()" :ripple="false"
-              :color="tab == 'login' ? 'blue' : 'white'" size="large" class="tw-flex-1"
-              :class="tab == 'login' ? 'basis-3/4' : 'basis-1/4'">
-              登录
-            </v-btn>
-            <v-btn @click="tab == 'register' ? onRegister() : switchTab()" :ripple="false"
-              :color="tab == 'login' ? 'white' : 'blue'" size="large" class="tw-flex-1"
-              :class="tab == 'login' ? 'basis-1/4' : 'basis-3/4'">
-              注册
-            </v-btn>
+        <div class="wrapper">
+          <div class="greetings">
+            <h1 class="green tw-text-center lg:tw-text-left">地铁客流量预测系统</h1>
+            <h3 class="tw-text-center lg:tw-text-left">
+              <p>「虽是咸鱼，但也要挣扎」</p>
+              <p class="mt-2">
+                项目地址：
+                <a href="https://github.com/AzurIce/2023-BJTU-SummerPractice-Subway" target="_blank"
+                  rel="noopener">Github</a>
+              </p>
+            </h3>
           </div>
-        </v-sheet>
-      </div>
-    </main>
+
+          <nav>
+            <RouterLink to="/">Home</RouterLink>
+            <RouterLink to="/about">About</RouterLink>
+          </nav>
+        </div>
+      </header>
+      <main>
+        <div class="tw-flex tw-flex-col tw-gap-2">
+          <v-sheet width="300" class="tw-mx-auto">
+            <v-form @submit.prevent>
+              <div class="flex" v-if="tab == 'register'">
+                <v-text-field v-model="state.email" :rules="rulesEmail" label="Email" />
+                <v-btn @click="onSendCode()">获取验证码</v-btn>
+                <v-text-field v-model="state.code" :rules="rulesCode" label="Code" />
+              </div>
+              <v-text-field v-model="state.username" :rules="rulesUsername" label="Username" />
+              <v-text-field v-model="state.password" :rules="rulesPassword" label="Password" type="password" />
+              <v-text-field v-model="state.repeatPassword" :rules="rulesRepeatPassword" label="RepeatPassword"
+                v-if="tab == 'register'" type="password" />
+            </v-form>
+            <div class="tw-flex tw-gap-2 tw-mt-2 tw-w-300 tw-justify-around">
+              <v-btn @click="tab == 'login' ? onLogin() : switchTab()" :ripple="false"
+                :color="tab == 'login' ? 'blue' : 'white'" size="large" class="tw-flex-1"
+                :class="tab == 'login' ? 'basis-3/4' : 'basis-1/4'">
+                登录
+              </v-btn>
+              <v-btn @click="tab == 'register' ? onRegister() : switchTab()" :ripple="false"
+                :color="tab == 'login' ? 'white' : 'blue'" size="large" class="tw-flex-1"
+                :class="tab == 'login' ? 'basis-1/4' : 'basis-3/4'">
+                注册
+              </v-btn>
+            </div>
+          </v-sheet>
+        </div>
+      </main>
+    </div>
   </div>
 </template>
 
 <style scoped>
+/* .bigContiner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+} */
+
 h1 {
   font-weight: 500;
   font-size: 2.3rem;
