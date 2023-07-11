@@ -142,8 +142,6 @@ async function updateData() {
   loading.value = false
 }
 
-let dataInterval = 0
-let trainPosInterval = 0
 
 const selectedId = ref('')
 
@@ -194,48 +192,55 @@ function initMap() {
     map.on('mouseleave', 'stop', () => {
       map.getCanvas().style.cursor = '';
     });
-    allUpdate()
+    await allUpdate()
+    overlay.value = false
 
-    dataInterval = setInterval(() => {
-      updateData()
-    }, 2500)
+    // dataInterval = setInterval(() => {
+    //   updateData()
+    // }, 2500)
 
-    trainPosInterval = setInterval(() => {
-      updateTrainPositions()
-    }, 50)
+    // trainPosInterval = setInterval(() => {
+    //   updateTrainPositions()
+    // }, 50)
   })
 }
 
 onMounted(async () => {
   initMap()
 })
-const autoUpdate = ref(true)
+const autoUpdate = ref(false)
 
 import StationInfo from '../components/StationInfo.vue'
 
+let dataInterval = 0
+let trainPosInterval = 0
 function switchRealtime(res) {
+  console.log(res)
   if (res) {
-    dataInterval = setInterval(async () => {
-      await mapStore.updateData()
-      await updateRoutes()
-    }, 2500)
-
-    trainPosInterval = setInterval(() => {
-      updateTrainPositions()
-    }, 50)
+    console.log('setInterval')
+    dataInterval = setInterval(updateData, 2500)
+    trainPosInterval = setInterval(updateTrainPositions, 50)
   } else {
+    console.log('clearInterval')
     clearInterval(dataInterval)
     clearInterval(trainPosInterval)
   }
 }
+
+const overlay = ref(true)
 </script>
 
 <template>
+  <v-overlay :model-value="overlay" class="align-center justify-center" :persistent="true">
+    <div class="tw-flex tw-flex-col">
+      <v-progress-circular color="white" indeterminate size="64">🫠</v-progress-circular>
+      <span class="tw-text-white">loading...</span>
+    </div>
+  </v-overlay>
   <div class="tw-h-full tw-relative">
-    <!-- <v-btn>???</v-btn> -->
     <div class="tw-flex tw-flex-col tw-bg-white tw-rounded tw-absolute tw-z-10 tw-m-4 tw-p-4 tw-shadow">
       <div clas="tw-flex">
-        <v-btn icon="mdi-refresh" @click="allUpdate" :loading="loading" />
+        <v-btn icon="mdi-refresh" @click="allUpdate" :loading="loading" inline/>
         <v-switch label="实时更新" v-model="autoUpdate" @update:modelValue="switchRealtime"></v-switch>
       </div>
       <!-- {{ selectedId }} -->
