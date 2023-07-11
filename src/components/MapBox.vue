@@ -142,21 +142,13 @@ async function updateData() {
   loading.value = false
 }
 
-let dataInterval
-let trainPosInterval
-
 
 const selectedId = ref('')
 
-
 function initMap() {
   map = new mapboxgl.Map({
-    container: 'map', // container ID
-    style: 'mapbox://styles/mapbox/dark-v10', // style URL
-    // style: 'mapbox://styles/azurice/cljw59k7o01y801qyfynd787k', // style URL
-    // style: 'mapbox://styles/azurice/cljw59k7o01y801qyfynd787k/draft', // style URL
-    // style: 'mapbox://styles/theweekendest/ck1fhati848311cp6ezdzj5cm?optimize=true', // style URL
-    // center: [-73.904496, 40.720449], // starting position [lng, lat]
+    container: 'map',
+    style: 'mapbox://styles/mapbox/dark-v10',
     maxBounds: [
       [-74.309883, 40.48388],
       [-73.677476, 40.909622]
@@ -200,50 +192,59 @@ function initMap() {
     map.on('mouseleave', 'stop', () => {
       map.getCanvas().style.cursor = '';
     });
-    allUpdate()
+    await allUpdate()
+    overlay.value = false
 
-    dataInterval = setInterval(() => {
-      updateData()
-    }, 2500)
+    // dataInterval = setInterval(() => {
+    //   updateData()
+    // }, 2500)
 
-    trainPosInterval = setInterval(() => {
-      updateTrainPositions()
-    }, 50)
+    // trainPosInterval = setInterval(() => {
+    //   updateTrainPositions()
+    // }, 50)
   })
 }
 
 onMounted(async () => {
   initMap()
 })
-const autoUpdate = ref(true)
+const autoUpdate = ref(false)
+
+import StationInfo from '../components/StationInfo.vue'
+
+let dataInterval = 0
+let trainPosInterval = 0
+function switchRealtime(res) {
+  console.log(res)
+  if (res) {
+    console.log('setInterval')
+    dataInterval = setInterval(updateData, 2500)
+    trainPosInterval = setInterval(updateTrainPositions, 50)
+  } else {
+    console.log('clearInterval')
+    clearInterval(dataInterval)
+    clearInterval(trainPosInterval)
+  }
+}
+
+const overlay = ref(true)
 </script>
 
 <template>
+  <v-overlay :model-value="overlay" class="align-center justify-center" :persistent="true">
+    <div class="tw-flex tw-flex-col">
+      <v-progress-circular color="white" indeterminate size="64">🫠</v-progress-circular>
+      <span class="tw-text-white">loading...</span>
+    </div>
+  </v-overlay>
   <div class="tw-h-full tw-relative">
-    <!-- <v-btn>???</v-btn> -->
     <div class="tw-flex tw-flex-col tw-bg-white tw-rounded tw-absolute tw-z-10 tw-m-4 tw-p-4 tw-shadow">
       <div clas="tw-flex">
-        <v-btn icon="mdi-refresh" @click="allUpdate" :loading="loading" />
-        <v-switch label="实时更新" v-model="autoUpdate" @update:modelValue="(res) => {
-          if (res) {
-            dataInterval = setInterval(async () => {
-              await mapStore.updateData()
-              await updateRoutes()
-            }, 2500)
-
-            trainPosInterval = setInterval(() => {
-              updateTrainPositions()
-            }, 50)
-          } else {
-            clearInterval(dataInterval)
-            clearInterval(trainPosInterval)
-          }
-        }"></v-switch>
+        <v-btn icon="mdi-refresh" @click="allUpdate" :loading="loading" inline/>
+        <v-switch label="实时更新" v-model="autoUpdate" @update:modelValue="switchRealtime"></v-switch>
       </div>
-      <div v-if="selectedId != ''">
-        <v-btn icon="mdi-arrow-left-thin" @click="() => { selectedId = '' }" />
-        {{ selectedId }}
-      </div>
+      <!-- {{ selectedId }} -->
+      <StationInfo v-model="selectedId" />
     </div>
     <div id="map" class="tw-h-full tw-w-full" />
   </div>
