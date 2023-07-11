@@ -103,7 +103,7 @@ function onLogin() {
 const amountX = 50
 const amountY = 50
 const color = "#cacfde"
-const top = 350
+// const top = 350
 
 import * as THREE from "three";
 
@@ -248,7 +248,7 @@ function onWindowResize() {
 
 //监听鼠标移动事件
 function onPointerMove(event) {
-  console.log(event);
+  // console.log(event);
   if (event.isPrimary === false) return;
   mouseX = event.clientX - windowHalfX;
 }
