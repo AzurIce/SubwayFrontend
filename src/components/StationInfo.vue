@@ -12,18 +12,26 @@ defineEmits(['update:modelValue'])
 const selected = computed(() => (props.modelValue != ''))
 const station = computed(() => station_details[props.modelValue] || {})
 
+// const loading = ref(false)
 function updateData() {
+  // loading.value = true
   getData(props.modelValue).then((res) => {
     // console.log(res)
     if (myChart) {
       myChart.dispose()
     }
     myChart = echarts.init(chart.value);
+    // loading.value = false
     // 绘制图表
     myChart.setOption({
       title: {
         text: '人流量图'
       },
+      // legend: {
+      //   orient: 'vertical',
+      //   right: 10,
+      //   top: 'center'
+      // },
       tooltip: {},
       xAxis: {
         data: res.map((v) => v.dateTime)
@@ -71,6 +79,7 @@ onUpdated(() => {
       {{ station.longitude }}
       {{ station.latitude }}
     </div>
-    <div ref="chart" style="width: 500px;" class="tw-h-80 tw-w-80"/>
+    <!-- <v-progress-circular color="white" indeterminate size="64" v-if="loading">🫠</v-progress-circular> -->
+    <div ref="chart" class="tw-h-80 tw-w-80" />
   </div>
 </template>
