@@ -142,21 +142,15 @@ async function updateData() {
   loading.value = false
 }
 
-let dataInterval
-let trainPosInterval
-
+let dataInterval = 0
+let trainPosInterval = 0
 
 const selectedId = ref('')
 
-
 function initMap() {
   map = new mapboxgl.Map({
-    container: 'map', // container ID
-    style: 'mapbox://styles/mapbox/dark-v10', // style URL
-    // style: 'mapbox://styles/azurice/cljw59k7o01y801qyfynd787k', // style URL
-    // style: 'mapbox://styles/azurice/cljw59k7o01y801qyfynd787k/draft', // style URL
-    // style: 'mapbox://styles/theweekendest/ck1fhati848311cp6ezdzj5cm?optimize=true', // style URL
-    // center: [-73.904496, 40.720449], // starting position [lng, lat]
+    container: 'map',
+    style: 'mapbox://styles/mapbox/dark-v10',
     maxBounds: [
       [-74.309883, 40.48388],
       [-73.677476, 40.909622]
@@ -218,6 +212,22 @@ onMounted(async () => {
 const autoUpdate = ref(true)
 
 import StationInfo from '../components/StationInfo.vue'
+
+function switchRealtime(res) {
+  if (res) {
+    dataInterval = setInterval(async () => {
+      await mapStore.updateData()
+      await updateRoutes()
+    }, 2500)
+
+    trainPosInterval = setInterval(() => {
+      updateTrainPositions()
+    }, 50)
+  } else {
+    clearInterval(dataInterval)
+    clearInterval(trainPosInterval)
+  }
+}
 </script>
 
 <template>
@@ -226,24 +236,10 @@ import StationInfo from '../components/StationInfo.vue'
     <div class="tw-flex tw-flex-col tw-bg-white tw-rounded tw-absolute tw-z-10 tw-m-4 tw-p-4 tw-shadow">
       <div clas="tw-flex">
         <v-btn icon="mdi-refresh" @click="allUpdate" :loading="loading" />
-        <v-switch label="实时更新" v-model="autoUpdate" @update:modelValue="(res) => {
-          if (res) {
-            dataInterval = setInterval(async () => {
-              await mapStore.updateData()
-              await updateRoutes()
-            }, 2500)
-
-            trainPosInterval = setInterval(() => {
-              updateTrainPositions()
-            }, 50)
-          } else {
-            clearInterval(dataInterval)
-            clearInterval(trainPosInterval)
-          }
-        }"></v-switch>
+        <v-switch label="实时更新" v-model="autoUpdate" @update:modelValue="switchRealtime"></v-switch>
       </div>
       <!-- {{ selectedId }} -->
-      <StationInfo v-model="selectedId"/>
+      <StationInfo v-model="selectedId" />
     </div>
     <div id="map" class="tw-h-full tw-w-full" />
   </div>
