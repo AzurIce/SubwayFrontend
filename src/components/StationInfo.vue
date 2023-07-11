@@ -14,9 +14,10 @@ const station = computed(() => station_details[props.modelValue] || {})
 function updateData() {
   getData(props.modelValue).then((res) => {
     // console.log(res)
-    if (!myChart) {
-      myChart = echarts.init(chart.value);
+    if (myChart) {
+      myChart.dispose()
     }
+    myChart = echarts.init(chart.value);
     // 绘制图表
     myChart.setOption({
       title: {
