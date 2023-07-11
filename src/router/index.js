@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import LoginPage from '../pages/LoginPage.vue'
 import HomePage from '../pages/HomePage.vue'
 import AboutPage from '../pages/AboutPage.vue'
+import TestPage from '../pages/TestPage.vue'
 
 import {useTokenStore} from '../stores/token'
 
@@ -30,6 +31,11 @@ const router = createRouter({
       path:'/heat',
       name:'heat',
       component:()=> import ('../components/HeatMap.vue')
+    },
+    {
+      path: '/test',
+      name: 'test',
+      component: TestPage
     }
   ]
 })
