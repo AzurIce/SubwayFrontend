@@ -130,9 +130,9 @@ const msg = ref('')
               </div>
               <v-text-field v-model="state.username" :rules="[() => (state.username != '') || '用户名不能为空.']"
                 label="Username" />
-              <v-text-field v-model="state.password" :rules="[() => (state.password != '') || '密码不能为空.']" label="Password" type="password" />
+              <v-text-field v-model="state.password" :rules="[() => (state.password != '') || '密码不能为空.']" label="Password" type="password"  @keydown.enter="onLogin"/>
               <v-text-field v-model="state.repeatPassword" :rules="[() => (state.repeatPassword == state.password) || '密码不一致.']" label="RepeatPassword"
-                v-if="tab == 'register'" type="password" />
+                v-if="tab == 'register'" type="password" @keydown.enter="onRegister"/>
             </v-form>
             <div class="tw-flex tw-gap-2 tw-mt-2 tw-w-300 tw-justify-around">
               <v-btn @click="tab == 'login' ? onLogin() : switchTab()" :ripple="false"
