@@ -232,7 +232,7 @@ function switchRealtime(res) {
       <!-- 我们在加载的时候显示旋转动画 -->
       <StationInfo v-model="selectedId" />
     </div>
-    <div id="map" class="tw-h-full tw-w-full" />
+    <div id="map" class="tw-h-full tw-w-full" style="width: 500px;"/>
   </div>
 </template>
 
