@@ -8,6 +8,7 @@ import router from '../router/index'
 import { useTokenStore } from '../stores/token'
 const tokenStore = useTokenStore()
 
+const snackbar = ref(false)
 const snackbarText = ref('')
 
 const state = reactive({
@@ -65,6 +66,7 @@ function switchTab() {
   tab.value = tab.value == 'login' ? 'register' : 'login'
 }
 function onSendCode() {
+  console.log('> onSendCode')
   sendCode(state.email).then((res) => {
     console.log(res)
     state.token = res.data.data
@@ -73,6 +75,7 @@ function onSendCode() {
   })
 }
 function onRegister() {
+  console.log('> onRegister')
   register(state.email, state.token, state.code, state.username, state.password).then((res) => {
     console.log(res)
   }).catch((err) => {
@@ -81,6 +84,7 @@ function onRegister() {
   // TODO: Register logic
 }
 function onLogin() {
+  console.log('> onLogin')
   if (import.meta.env.DEV) {
     router.push('/')
     return
@@ -99,6 +103,9 @@ function onLogin() {
 
 <template>
   <div class="bigContiner">
+    <div class="wall-bg tw-absolute tw-inset-0">
+
+    </div>
     <v-snackbar v-model="snackbar">
       {{ snackbarText }}
 
@@ -139,8 +146,11 @@ function onLogin() {
             <v-form @submit.prevent>
               <div class="flex" v-if="tab == 'register'">
                 <v-text-field v-model="state.email" :rules="rulesEmail" label="Email" />
-                <v-btn @click="onSendCode()">获取验证码</v-btn>
-                <v-text-field v-model="state.code" :rules="rulesCode" label="Code" />
+                <v-text-field v-model="state.code" :rules="rulesCode" label="Code">
+                  <template #append>
+                    <v-btn color="white" @click="onSendCode">获取</v-btn>
+                  </template>
+                </v-text-field>
               </div>
               <v-text-field v-model="state.username" :rules="rulesUsername" label="Username" />
               <v-text-field v-model="state.password" :rules="rulesPassword" label="Password" type="password" />

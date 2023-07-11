@@ -2,7 +2,7 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import axios from 'axios'
 
-import { timeCount } from '../lib/utils'
+// import { timeCount } from '../lib/utils'
 
 import * as turf from '@turf/turf'
 

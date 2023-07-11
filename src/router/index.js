@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
-// import HomeView from '../views/HomeView.vue'
 import LoginPage from '../pages/LoginPage.vue'
 import HomePage from '../pages/HomePage.vue'
+import AboutPage from '../pages/AboutPage.vue'
 
 import {useTokenStore} from '../stores/token'
 
@@ -25,10 +25,7 @@ const router = createRouter({
     {
       path: '/about',
       name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue')
+      component: AboutPage
     }
   ]
 })
@@ -37,10 +34,9 @@ router.beforeEach((to, from) => {
   const tokenStore = useTokenStore()
   if (to.meta.requireAuth && !tokenStore.isLoggedIn && !import.meta.env.DEV) {
     router.replace('/login')
+    // 返回 false 以取消导航
     return false
   }
-  // ...
-  // 返回 false 以取消导航
   return true
 })
 
