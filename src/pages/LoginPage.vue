@@ -9,9 +9,6 @@ const router = useRouter()
 import { useTokenStore } from '../stores/token'
 const tokenStore = useTokenStore()
 
-const snackbar = ref(false)
-const snackbarText = ref('')
-
 const state = reactive({
   username: '',
   password: '',
