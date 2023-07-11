@@ -2,32 +2,48 @@
   <div class="about">
     <div class="con">
       <h1 class="green tw-text-center">北京交通大学软件学院2023暑期实训项目</h1>
-      <h2 class="green">自来熟小组</h2>
+      <h2 class="green jump">
+        <span>自</span>
+        <span>来</span>
+        <span>熟</span>
+        <span>小</span>
+        <span>队</span>
+      </h2>
       <h2 class="green">组员有：xyh，xb，cyb，fwh，cjx，zml</h2>
       <v-btn class="green" append-icon="$vuetify" stacked @click="addCount">
         Button
       </v-btn>
       <h1 class="green">你一共点击了{{ count }}次</h1>
     </div>
+    <CommentColumnVue></CommentColumnVue>
   </div>
+  
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      count: 0,
-    }
-  },
-  methods: {
-    addCount() {
-      this.count++;
-    },
-  },
+<script setup>
+
+import { ref } from 'vue';
+import CommentColumnVue from '../components/CommentColumn.vue';
+
+const count = ref(0);
+
+function addCount() {
+  count.value++;
 }
+
+
 </script>
 
-<style>
+<style scope>
+html, body {
+  width: 100%;  
+  height: 100%;
+  -webkit-font-smoothing: antialiased;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .con{
   text-align: center;
 }
@@ -59,4 +75,56 @@ h2 {
   bottom: 0;
   right: 0;
 }
+
+/* change */
+
+.jump {
+  height: 60px;
+}
+
+.jump span {
+  position: relative;
+  margin-right: 10px;
+  top: 20px;
+  display: inline-block;
+  animation: bounce .3s ease infinite alternate;
+  font-family: 'ChildFont', cursive;
+  font-size: 40px;
+  color: #FFF;
+  text-shadow: 0 1px 0 #CCC,
+               0 2px 0 #CCC,
+               0 3px 0 #CCC,
+               0 4px 0 #CCC,
+               0 5px 0 #CCC,
+               0 6px 0 transparent,
+               0 7px 0 transparent,
+               0 8px 0 transparent,
+               0 9px 0 transparent,
+               0 10px 10px rgba(0, 0, 0, .4);
+}
+
+.jump span:nth-child(2) { animation-delay: .1s; }
+.jump span:nth-child(3) { animation-delay: .2s; }
+.jump span:nth-child(4) { animation-delay: .3s; }
+.jump span:nth-child(5) { animation-delay: .4s; }
+.jump span:nth-child(6) { animation-delay: .5s; }
+.jump span:nth-child(7) { animation-delay: .6s; }
+.jump span:nth-child(8) { animation-delay: .7s; }
+
+@keyframes bounce {
+  100% {
+    top: -20px;
+    text-shadow: 0 1px 0 #CCC,
+                 0 2px 0 #CCC,
+                 0 3px 0 #CCC,
+                 0 4px 0 #CCC,
+                 0 5px 0 #CCC,
+                 0 6px 0 #CCC,
+                 0 7px 0 #CCC,
+                 0 8px 0 #CCC,
+                 0 9px 0 #CCC,
+                 0 50px 25px rgba(0, 0, 0, .2);
+  }
+}
+
 </style>

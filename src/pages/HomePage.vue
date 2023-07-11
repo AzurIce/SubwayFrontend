@@ -1,14 +1,6 @@
 <script setup>
-import router from '../router/index'
 import { ref } from 'vue'
-
-// let map = null
-const donateDialog = ref(false)
-// import { getData } from '../lib/gtfs/gtfs'
-// import axios from 'axios';
-// import stops_data from './stops.json'
-// import stops_data from '../assets/stops.json'
-// console.log(stops_data)
+import router from '../router/index'
 import { useTokenStore } from '../stores/token'
 const tokenStore = useTokenStore()
 
@@ -18,6 +10,7 @@ function onLogout() {
 }
 
 import MapBox from '../components/MapBox.vue'
+const donateDialog = ref(false)
 </script>
 
 <template>
@@ -34,8 +27,8 @@ import MapBox from '../components/MapBox.vue'
   </v-dialog>
   <v-layout class="tw-h-full">
     <v-app-bar :elevation="2" title="地铁客流量预测系统">
-      <v-btn icon="mdi-currency-usd" @click="() => {donateDialog = true}" />
-      <v-btn icon="mdi-poll"></v-btn>
+      <v-btn icon="mdi-currency-usd" @click="() => { donateDialog = true }" />
+      <v-btn icon="mdi-poll" @click="() => { router.push('/test') }"></v-btn>
       <v-btn icon="mdi-exit-run" @click="onLogout()"></v-btn>
     </v-app-bar>
     <v-main class="tw-h-full">
