@@ -8,6 +8,9 @@ dependencies:
   '@turf/turf':
     specifier: ^6.5.0
     version: registry.npmmirror.com/@turf/turf@6.5.0
+  apexcharts:
+    specifier: ^3.41.0
+    version: registry.npmmirror.com/apexcharts@3.41.0
   axios:
     specifier: ^1.4.0
     version: registry.npmmirror.com/axios@1.4.0
@@ -38,6 +41,9 @@ dependencies:
   vue-router:
     specifier: ^4.2.2
     version: registry.npmmirror.com/vue-router@4.2.2(vue@3.3.4)
+  vue3-apexcharts:
+    specifier: ^1.4.1
+    version: registry.npmmirror.com/vue3-apexcharts@1.4.1(apexcharts@3.41.0)(vue@3.3.4)
   vuetify:
     specifier: ^3.3.6
     version: registry.npmmirror.com/vuetify@3.3.6(vite-plugin-vuetify@1.0.2)(vue@3.3.4)
@@ -2133,6 +2139,19 @@ packages:
       normalize-path: registry.npmmirror.com/normalize-path@3.0.0
       picomatch: registry.npmmirror.com/picomatch@2.3.1
     dev: true
+
+  registry.npmmirror.com/apexcharts@3.41.0:
+    resolution: {integrity: sha512-FJXA7NVjxs1q+ptR3b1I+pN8K/gWuXn+qLZjFz8EHvJOokdgcuwa/HSe5aC465HW/LWnrjWLSTsOQejQbQ42hQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/apexcharts/-/apexcharts-3.41.0.tgz}
+    name: apexcharts
+    version: 3.41.0
+    dependencies:
+      svg.draggable.js: registry.npmmirror.com/svg.draggable.js@2.2.2
+      svg.easing.js: registry.npmmirror.com/svg.easing.js@2.0.0
+      svg.filter.js: registry.npmmirror.com/svg.filter.js@2.0.2
+      svg.pathmorphing.js: registry.npmmirror.com/svg.pathmorphing.js@0.1.3
+      svg.resize.js: registry.npmmirror.com/svg.resize.js@1.4.3
+      svg.select.js: registry.npmmirror.com/svg.select.js@3.0.1
+    dev: false
 
   registry.npmmirror.com/arg@5.0.2:
     resolution: {integrity: sha512-PYjyFOLKQ9y57JvQ6QLo8dAgNqswh8M1RMJYdQduT6xbWSgK36P/Z/v+p888pM69jMMfS8Xd8F6I1kQ/I9HUGg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/arg/-/arg-5.0.2.tgz}
@@ -4467,6 +4486,76 @@ packages:
     engines: {node: '>= 0.4'}
     dev: true
 
+  registry.npmmirror.com/svg.draggable.js@2.2.2:
+    resolution: {integrity: sha512-JzNHBc2fLQMzYCZ90KZHN2ohXL0BQJGQimK1kGk6AvSeibuKcIdDX9Kr0dT9+UJ5O8nYA0RB839Lhvk4CY4MZw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/svg.draggable.js/-/svg.draggable.js-2.2.2.tgz}
+    name: svg.draggable.js
+    version: 2.2.2
+    engines: {node: '>= 0.8.0'}
+    dependencies:
+      svg.js: registry.npmmirror.com/svg.js@2.7.1
+    dev: false
+
+  registry.npmmirror.com/svg.easing.js@2.0.0:
+    resolution: {integrity: sha512-//ctPdJMGy22YoYGV+3HEfHbm6/69LJUTAqI2/5qBvaNHZ9uUFVC82B0Pl299HzgH13rKrBgi4+XyXXyVWWthA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/svg.easing.js/-/svg.easing.js-2.0.0.tgz}
+    name: svg.easing.js
+    version: 2.0.0
+    engines: {node: '>= 0.8.0'}
+    dependencies:
+      svg.js: registry.npmmirror.com/svg.js@2.7.1
+    dev: false
+
+  registry.npmmirror.com/svg.filter.js@2.0.2:
+    resolution: {integrity: sha512-xkGBwU+dKBzqg5PtilaTb0EYPqPfJ9Q6saVldX+5vCRy31P6TlRCP3U9NxH3HEufkKkpNgdTLBJnmhDHeTqAkw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/svg.filter.js/-/svg.filter.js-2.0.2.tgz}
+    name: svg.filter.js
+    version: 2.0.2
+    engines: {node: '>= 0.8.0'}
+    dependencies:
+      svg.js: registry.npmmirror.com/svg.js@2.7.1
+    dev: false
+
+  registry.npmmirror.com/svg.js@2.7.1:
+    resolution: {integrity: sha512-ycbxpizEQktk3FYvn/8BH+6/EuWXg7ZpQREJvgacqn46gIddG24tNNe4Son6omdXCnSOaApnpZw6MPCBA1dODA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/svg.js/-/svg.js-2.7.1.tgz}
+    name: svg.js
+    version: 2.7.1
+    dev: false
+
+  registry.npmmirror.com/svg.pathmorphing.js@0.1.3:
+    resolution: {integrity: sha512-49HWI9X4XQR/JG1qXkSDV8xViuTLIWm/B/7YuQELV5KMOPtXjiwH4XPJvr/ghEDibmLQ9Oc22dpWpG0vUDDNww==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/svg.pathmorphing.js/-/svg.pathmorphing.js-0.1.3.tgz}
+    name: svg.pathmorphing.js
+    version: 0.1.3
+    engines: {node: '>= 0.8.0'}
+    dependencies:
+      svg.js: registry.npmmirror.com/svg.js@2.7.1
+    dev: false
+
+  registry.npmmirror.com/svg.resize.js@1.4.3:
+    resolution: {integrity: sha512-9k5sXJuPKp+mVzXNvxz7U0uC9oVMQrrf7cFsETznzUDDm0x8+77dtZkWdMfRlmbkEEYvUn9btKuZ3n41oNA+uw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/svg.resize.js/-/svg.resize.js-1.4.3.tgz}
+    name: svg.resize.js
+    version: 1.4.3
+    engines: {node: '>= 0.8.0'}
+    dependencies:
+      svg.js: registry.npmmirror.com/svg.js@2.7.1
+      svg.select.js: registry.npmmirror.com/svg.select.js@2.1.2
+    dev: false
+
+  registry.npmmirror.com/svg.select.js@2.1.2:
+    resolution: {integrity: sha512-tH6ABEyJsAOVAhwcCjF8mw4crjXSI1aa7j2VQR8ZuJ37H2MBUbyeqYr5nEO7sSN3cy9AR9DUwNg0t/962HlDbQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/svg.select.js/-/svg.select.js-2.1.2.tgz}
+    name: svg.select.js
+    version: 2.1.2
+    engines: {node: '>= 0.8.0'}
+    dependencies:
+      svg.js: registry.npmmirror.com/svg.js@2.7.1
+    dev: false
+
+  registry.npmmirror.com/svg.select.js@3.0.1:
+    resolution: {integrity: sha512-h5IS/hKkuVCbKSieR9uQCj9w+zLHoPh+ce19bBYyqF53g6mnPB8sAtIbe1s9dh2S2fCmYX2xel1Ln3PJBbK4kw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/svg.select.js/-/svg.select.js-3.0.1.tgz}
+    name: svg.select.js
+    version: 3.0.1
+    engines: {node: '>= 0.8.0'}
+    dependencies:
+      svg.js: registry.npmmirror.com/svg.js@2.7.1
+    dev: false
+
   registry.npmmirror.com/tailwindcss@3.3.2:
     resolution: {integrity: sha512-9jPkMiIBXvPc2KywkraqsUfbfj+dHDb+JPWtSJa9MLFdrPyazI7q6WX2sUrm7R9eVR7qqv3Pas7EvQFzxKnI6w==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/tailwindcss/-/tailwindcss-3.3.2.tgz}
     name: tailwindcss
@@ -4844,6 +4933,19 @@ packages:
       vue: ^3.2.0
     dependencies:
       '@vue/devtools-api': registry.npmmirror.com/@vue/devtools-api@6.5.0
+      vue: registry.npmmirror.com/vue@3.3.4
+    dev: false
+
+  registry.npmmirror.com/vue3-apexcharts@1.4.1(apexcharts@3.41.0)(vue@3.3.4):
+    resolution: {integrity: sha512-96qP8JDqB9vwU7bkG5nVU+E0UGQn7yYQVqUUCLQMYWDuQyu2vE77H/UFZ1yI+hwzlSTBKT9BqnNG8JsFegB3eg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/vue3-apexcharts/-/vue3-apexcharts-1.4.1.tgz}
+    id: registry.npmmirror.com/vue3-apexcharts/1.4.1
+    name: vue3-apexcharts
+    version: 1.4.1
+    peerDependencies:
+      apexcharts: '> 3.0.0'
+      vue: '> 3.0.0'
+    dependencies:
+      apexcharts: registry.npmmirror.com/apexcharts@3.41.0
       vue: registry.npmmirror.com/vue@3.3.4
     dev: false
 

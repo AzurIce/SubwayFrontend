@@ -1,8 +1,8 @@
 <script setup>
-import SnackBar from '../components/SnackBar.vue'
+import SnackBar from '@/components/SnackBar.vue'
 import { onMounted, ref } from 'vue'
-
-import {getUsers, deleteUser} from '../lib/axios/admin'
+import BgParticle from '../../components/BgParticle.vue';
+import {getUsers, deleteUser} from '@/lib/axios/admin'
 
 const users = ref([])
 
@@ -34,7 +34,8 @@ const msg = ref('')
 
 <template>
     <SnackBar v-model="msg"/>
-    <v-table>
+     <BgParticle/>
+    <v-table style="background-color: transparent;">
     <thead>
       <tr>
         <th class="text-left">
@@ -70,5 +71,15 @@ const msg = ref('')
       </tr>
     </tbody>
   </v-table>
-    admin
+  <div class="admin">
+    Welcome,Super Admin!
+  </div>
 </template>
+<style scoped>
+.admin {
+  text-align: center;
+  font-size: 30px;
+  color: rgb(44, 179, 191);
+  font-weight: bold;
+}
+</style>

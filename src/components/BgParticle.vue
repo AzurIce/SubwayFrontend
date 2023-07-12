@@ -1,4 +1,5 @@
 <script setup>
+// 首页粒子波浪特效
 const amountX = 50
 const amountY = 50
 const color = "#cacfde"

@@ -18,9 +18,14 @@ export const useTokenStore = defineStore('token', () => {
         permissionLevel.value = permission
         window.localStorage.setItem('xxqPermission', permission)
     }
+    function unSetPermission(permission) {
+        permissionLevel.value = permission
+        window.localStorage.setItem('xxqPermission', 0)
+    }
+
     function isAdmin() {
         return permissionLevel.value == 3
     }
 
-    return { token, isLoggedIn, setToken, unSetToken, setPermission, permissionLevel, isAdmin }
+    return { token, isLoggedIn, setToken, unSetToken, setPermission, permissionLevel, isAdmin, unSetPermission }
 })

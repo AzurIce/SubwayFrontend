@@ -1,25 +1,50 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import LoginPage from '../pages/LoginPage.vue'
-import HomePage from '../pages/HomePage.vue'
-import AboutPage from '../pages/AboutPage.vue'
-import TestPage from '../pages/TestPage.vue'
-import  CountPage from '../pages/CountPage.vue'
-import AdminPage from '../pages/AdminPage.vue'
+import LoginPage from '@/pages/LoginPage.vue'
+import AboutPage from '@/pages/AboutPage.vue'
+import TestPage from '@/pages/TestPage.vue'
 
-import {useTokenStore} from '../stores/token'
+import MainPage from '@/pages/MainPage.vue'
+import HomePage from '@/pages/main/HomePage.vue'
+import CountPage from '@/pages/main/CountPage.vue'
+import AdminPage from '@/pages/main/AdminPage.vue'
 
-
+import { useTokenStore } from '@/stores/token'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
-      name: 'home',
       meta: {
-        requireAuth: true,
+        requireAuth: true
       },
-      component: HomePage
+      component: MainPage,
+      children: [
+        {
+          path: '',
+          name: 'home',
+          meta: {
+            requireAuth: true
+          },
+          component: HomePage,
+        },
+        {
+          path: '/admin',
+          name: 'admin',
+          component: AdminPage,
+          meta: {
+            requireAuth: true
+          },
+        },
+        {
+          path: '/count',
+          name: 'count',
+          component: CountPage,
+          meta: {
+            requireAuth: true
+          },
+        }
+      ]
     },
     {
       path: '/login',
@@ -30,35 +55,27 @@ const router = createRouter({
       path: '/about',
       name: 'about',
       component: AboutPage
-    },{
-      path:'/heat',
-      name:'heat',
+    },
+    {
+      path: '/heat',
+      name: 'heat',
       meta: {
-        requireAuth: true,
+        requireAuth: true
       },
-      component:()=> import ('../components/HeatMap.vue')
+      component: () => import('../components/HeatMap.vue')
     },
     {
       path: '/test',
       name: 'test',
       meta: {
-        requireAuth: true,
+        requireAuth: true
       },
       component: TestPage
     },
     {
-      path:'/count',
-      name:'count',
-      component:CountPage
-    },{
-      path:'/adimn',
-      name:'admin',
-      component:AdminPage
-    },
-    {
-      path:'/palltte',
-      name:'palltte',
-      component:()=>import ('../components/Palltte.vue')
+      path: '/star',
+      name: 'star',
+      component: () => import('../components/Star.vue')
     }
   ]
 })
