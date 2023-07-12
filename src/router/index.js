@@ -71,11 +71,6 @@ const router = createRouter({
         requireAuth: true
       },
       component: TestPage
-    },
-    {
-      path: '/star',
-      name: 'star',
-      component: () => import('../components/Star.vue')
     }
   ]
 })

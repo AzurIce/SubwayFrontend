@@ -1,36 +1,48 @@
 <template>
-  <div>
+  <SnackBar v-model="msg"/>
+  <div :style="{ backgroundColor: backgroundColor, transition: 'background-color 0.4s ease-in-out' }">
+
     <div class="top-section">
-      <div class="top-box">区域1</div>
+      <Palltte class="top-box top-box-first" @changeColor="changeColor"></Palltte>
       <div class="top-box">区域2</div>
       <div class="top-box">区域3</div>
-      <Star class="top-box"></Star>
+      <Star class="top-box top-box-fourth"></Star>
     </div>
     <v-divider :thickness="3" class="border-opacity-75" color="info"></v-divider>
     <div class="bottom-section">
       <apexchart id="chartContainer" class="bottom-left" type="bar" :options="chartOptions" :series="series"></apexchart>
-      <div class="bottom-section-right">
-        <v-parallax src="https://cdn.vuetifyjs.com/images/parallax/material2.jpg">
-          <div class="bottom-right-top" style="overflow: hidden">
-            <v-expansion-panels>
-              <v-expansion-panel title="attention" style="backgrund-color: aliceblue">
+      <div class="bottom-section-right" style="overflow: hidden;">
+        <v-parallax src="https://cdn.vuetifyjs.com/images/parallax/material2.jpg" :contain="true">
+          <div class="bottom-right-top" style="overflow: hidden;">
+            <v-expansion-panels >
+              <v-expansion-panel title="注意事项" style="backgrund-color: aliceblue">
                 <v-expansion-panel-text>
-                  请选择你所要查询的日期，以4个小时为单位，输入的默认格式如下为<br /> yyyy/MM/dd HH
+                  1.请输入你所要查询的日期，以4个小时为单位<br />示例值: 2017-02-04 04:00:00<br/>
+                  2.输入你所要查询的站点 <br />示例值 R01<br/>
+                  3.输入你所要查询的事件段<br />
                 </v-expansion-panel-text>
               </v-expansion-panel>
             </v-expansion-panels>
             <br />
-            <v-text-field label="data" style="width: 50%; margin: 0% 5% 0% 15%"
-              hint="input the correct data"></v-text-field>
-            <v-text-field label="station" style="width: 50%; margin: 0% 5% 0% 15%"
-              hint="input the correct station"></v-text-field>
-            <v-text-field label="period" style="width: 50%; margin: 0% 5% 0% 15%"
-              hint="input the correct period"></v-text-field>
-            <v-btn color="blue" style="margin-left: 35%">confirm</v-btn>
+           
+            <v-row>
+              <v-col cols="4">
+                <v-text-field v-model="data" label="data" style="width: 100%" hint="input the correct data" :rules="[()=>(data!='')||'日期不可为空']"></v-text-field>
+              </v-col>
+              <v-col cols="4">
+                <v-text-field v-model="station" label="station" style="width: 100%" hint="input the correct station" :rules="[()=>(station!='')||'站点不能为空']"></v-text-field>
+              </v-col>
+              <v-col cols="4">
+                <v-text-field v-model="period" label="period" style="width: 100%" hint="input the correct period" :rules="[()=>(period!='')||'时间段不能为空']"></v-text-field>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="12" class="text-center">
+                <v-btn color="blue" class="mx-auto" @click="submit()">confirm</v-btn>
+              </v-col>
+            </v-row>
           </div>
         </v-parallax>
-
-        <!-- <div class="bottom-right-bottom">区域6-下</div> -->
 
         <apexchart id="lineContainer" class="bottom-right-bottom" type="line" :options="chartOptions" :series="series">
         </apexchart>
@@ -42,21 +54,44 @@
 
 <script>
 import ApexCharts from 'apexcharts'
-// import NavigationBar from '../components/NavigationBar.vue'
 import Star from '@/components/Star.vue'
+import Palltte from '../../components/Palltte.vue'
+import SnackBar from '../../components/SnackBar.vue'
+
+import { color } from 'echarts'
 
 export default {
   name: 'DataAnalysisDashboard',
   components: {
-    // NavigationBar,
-    Star
+    Star,
+    Palltte,
+    SnackBar
+  },
+  data() {
+    return {
+      backgroundColor: '#faebd7',
+      data:'',
+      station:'',
+      period:'',
+      msg:''
+    }
+  },
+  methods: {
+    changeColor(color) {
+      this.backgroundColor = color //点击按钮更改颜色
+    },
+    submit(){
+      console.log(this.data+"  "+this.station+"  "+this.period);
+
+
+    }
   },
   mounted() {
     const inputTime = {
       time: ''
     }
     // 模拟数据
-    const data = {
+    const Data = {
       labels: ['2023.7.11.0', '2023.7.11.4', '2023.7.11.8', '2023.7.11.12', '2023.7.11.16'],
       series: [
         {
@@ -83,9 +118,9 @@ export default {
       chart: {
         type: 'bar'
       },
-      series: data.series,
+      series: Data.series,
       xaxis: {
-        categories: data.labels
+        categories: Data.labels
       }
     }
 
@@ -94,9 +129,9 @@ export default {
       chart: {
         type: 'line'
       },
-      series: data.series,
+      series: Data.series,
       xaxis: {
-        categories: data.labels
+        categories: Data.labels
       }
     }
 
@@ -110,28 +145,41 @@ export default {
 </script> 
 
 <style scope>
-/* .container {
+.container {
+
   display: grid;
-  grid-template-rows: 22.5% 22.5% 22.5% 22.5%;
-  grid-template-rows: 25% 1% 70%;
+  grid-template-columns: 20% 20% 20% 20%;
+  grid-template-rows: 22% 3% 75%;
   height: 100%;
   width: 100%;
-  gap: 1%;
-} */
+  gap: 3%;
+}
 
 .top-section {
   display: flex;
-  gap: 4%;
+  gap: 2%;
 }
 
 .top-box {
-  flex: 1;
+  flex: 2;
   border: 1px solid black;
+}
+
+.top-box-first {
+  border: none;
+}
+
+.top-box-fourth {
+  box-shadow: 2px 8px 16px rgba(0, 0, 0, 0.4);
+  height: 200px;
+  width: 200px;
+  transform: translateZ(16px);
+  border: none
 }
 
 .bottom-section {
   display: flex;
-  gap: 4%;
+  gap: 2%;
 }
 
 .bottom-left {
@@ -144,13 +192,12 @@ export default {
 
 .bottom-section-right {
   flex: 1;
-  /* border: 1px solid black; */
   display: grid;
-  grid-template-rows: 48% 48%;
-  gap: 4%;
+  grid-template-rows: 46% 52%;
+  gap: 2%;
 }
 
-.bottom-right-top,
+/* .bottom-right-top, */
 .bottom-right-bottom {
   flex: 2;
   border: 1px solid black;
