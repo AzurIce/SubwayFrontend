@@ -47,13 +47,18 @@ const router = createRouter({
       component: TestPage
     },
     {
-      path:'/star',
-      name:'star',
-      component:()=>import('../components/Star.vue')
-    },{
       path:'/count',
       name:'count',
       component:CountPage
+    },{
+      path:'/adimn',
+      name:'admin',
+      component:AdminPage
+    },
+    {
+      path:'/palltte',
+      name:'palltte',
+      component:()=>import ('../components/Palltte.vue')
     }
   ]
 })

@@ -83,20 +83,8 @@ export default {
   box-sizing: border-box;
 }
 
-html,
-body {
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  background: #f4fcda;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
 .container {
-  width: 200px;
-  height: 200px;
-  margin: 30px auto;
+  margin:auto;
   position: relative;
   min-width: 200px;
   min-height: 200px;

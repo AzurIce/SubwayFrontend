@@ -18,8 +18,8 @@
             </v-card>
           </v-dialog>
       </v-btn>
-      <v-btn class="tw-text-purple" v-if="tokenStore.isAdmin()" @click="() => { router.push('/admin') }">管理</v-btn>
       <v-btn icon="mdi-currency-usd" @click="() => {donateDialog = true}" />
+      <v-btn class="tw-text-purple" v-if="tokenStore.isAdmin()" @click="() => { router.push('/admin') }" >管理</v-btn>
       <v-btn icon="mdi-poll" @click="onCountIT()"></v-btn>
       <v-btn icon="mdi-exit-run" @click="onLogout()"></v-btn>
     </v-app-bar>
