@@ -1,5 +1,5 @@
 <template>
-  <div class="container" style="margin-top: 1%">
+  <div>
     <div class="top-section">
       <div class="top-box">区域1</div>
       <div class="top-box">区域2</div>
@@ -13,8 +13,10 @@
         <v-parallax src="https://cdn.vuetifyjs.com/images/parallax/material2.jpg">
           <div class="bottom-right-top" style="overflow: hidden">
             <v-expansion-panels>
-              <v-expansion-panel title="attention" text="请选择你所要查询的日期，以4个小时为单位，输入的默认格式如下为<br /> yyyy/MM/dd HH"
-                style="background-color: aliceblue">
+              <v-expansion-panel title="attention" style="backgrund-color: aliceblue">
+                <v-expansion-panel-text>
+                  请选择你所要查询的日期，以4个小时为单位，输入的默认格式如下为<br /> yyyy/MM/dd HH
+                </v-expansion-panel-text>
               </v-expansion-panel>
             </v-expansion-panels>
             <br />
@@ -41,7 +43,7 @@
 <script>
 import ApexCharts from 'apexcharts'
 // import NavigationBar from '../components/NavigationBar.vue'
-import Star from '../components/Star.vue'
+import Star from '@/components/Star.vue'
 
 export default {
   name: 'DataAnalysisDashboard',
@@ -108,14 +110,14 @@ export default {
 </script> 
 
 <style scope>
-.container {
+/* .container {
   display: grid;
   grid-template-rows: 22.5% 22.5% 22.5% 22.5%;
   grid-template-rows: 25% 1% 70%;
   height: 100%;
   width: 100%;
   gap: 1%;
-}
+} */
 
 .top-section {
   display: flex;
