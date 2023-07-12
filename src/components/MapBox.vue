@@ -229,6 +229,7 @@ function switchRealtime(res) {
       <div class="tw-flex tw-items-center">
         <v-btn icon="mdi-refresh" @click="allUpdate" :loading="loading" inline />
         <v-switch label="实时更新" v-model="autoUpdate" @update:modelValue="switchRealtime" class="tw-inline-block tw-ml-4" hide-details></v-switch>
+        <v-switch label="热力图" class="tw-inline-block tw-ml-4" hide-details></v-switch>
       </div>
 
       <hr class="tw-mt-4 tw-mb-4" v-if="selectedId"/>
