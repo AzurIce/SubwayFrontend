@@ -6,25 +6,50 @@ import axios from 'axios'
 const host = 'http://124.70.109.243:3308'
 
 export function get(url) {
-  return axios.get(`${host}${url}`, {
-    timeout: 2000,
-    headers: {
-      token: window.localStorage.getItem('xxqToken')
-    }
+  return new Promise((resolve, reject) => {
+    axios
+      .get(`${host}${url}`, {
+        timeout: 2000,
+        headers: {
+          token: window.localStorage.getItem('xxqToken')
+        }
+      })
+      .then((res) => {
+        if (res.data.code != '200000') {
+          reject(res.data.msg)
+        } else {
+          resolve(res)
+        }
+      })
+      .catch((err) => {
+        reject(err)
+      })
   })
 }
 
 export function post(url, data, withToken) {
-  if (withToken) {
-    return axios.post(`${host}${url}`, data, {
-      timeout: 2000,
-      headers: {
-        token: window.localStorage.getItem('xxqToken')
+  const options = withToken
+    ? {
+        timeout: 2000,
+        headers: {
+          token: window.localStorage.getItem('xxqToken')
+        }
       }
-    })
-  } else {
-    return axios.post(`${host}${url}`, data, {
-      timeout: 2000
-    })
-  }
+    : {
+        timeout: 2000
+      }
+  return new Promise((resolve, reject) => {
+    axios
+      .post(`${host}${url}`, data, options)
+      .then((res) => {
+        if (res.data.code != '200000') {
+          reject(res.data.msg)
+        } else {
+          resolve(res)
+        }
+      })
+      .catch((err) => {
+        reject(err)
+      })
+  })
 }
