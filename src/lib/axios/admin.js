@@ -5,18 +5,18 @@ export async function getUsers() {
 }
 
 export async function deleteUser(id) {
-    return await get(`/user/delete?uid=${id}`)
+    return await post(`/user/delete?uid=${id}`, {}, true)
 }
 
 export async function logout() {
-    return  post(`/user/logout`)
+    return await post(`/user/logout`, {}, true)
 }
 
-export function updateUserInfo(id, name, mail, premission) {
-    return post(`/user/update`, {
-        id:id,
-        name:name,
-        mail:mail,
-        premission:premission,
-    })
+export async function updateUserInfo(id, name, per,email) {
+    return await post(`/user/update`, {
+        id: id,
+        name: name,
+        email: email,
+        per: per,
+    }, true)
 }
