@@ -64,8 +64,8 @@ export async function getData(id) {
         time.setHours(time.getHours() + i * 4)
         // console.log(time)
         const res = await _getTrueData(parseTime(time), id)
-        // console.log(parseTime(time), id)
-        // console.log(res)
+        console.log(parseTime(time), id)
+        console.log(res)
         result.push(res.data.data[0])
         // result.push({
         //     dateTime: parseTime(time),
@@ -80,8 +80,8 @@ export async function getData(id) {
         time.setHours(time.getHours() + i * 4)
         // console.log(time)
         const res = await _getTrueData(parseTime(time), id)
-        // console.log(parseTime(time), id)
-        // console.log(res)
+        console.log(parseTime(time), id)
+        console.log(res)
         result.push(res.data.data[0])
         // result.push({
         //     dateTime: parseTime(time),

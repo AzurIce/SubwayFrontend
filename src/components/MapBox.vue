@@ -223,14 +223,19 @@ function switchRealtime(res) {
     </div>
   </v-overlay>
   <div class="tw-h-full tw-relative">
-    <div class="tw-flex tw-flex-col tw-bg-white tw-rounded tw-absolute tw-z-10 tw-m-4 tw-p-4 tw-shadow">
-      <div clas="tw-flex">
+    <div class="tw-flex tw-flex-col tw-bg-white
+     tw-rounded tw-absolute tw-z-10 tw-m-4 tw-p-4 tw-shadow tw-mb-4 tw-w-1/3 tw-max-w-lg tw-max-h-90">
+
+      <div class="tw-flex tw-items-center">
         <v-btn icon="mdi-refresh" @click="allUpdate" :loading="loading" inline />
-        <v-switch label="实时更新" v-model="autoUpdate" @update:modelValue="switchRealtime"></v-switch>
+        <v-switch label="实时更新" v-model="autoUpdate" @update:modelValue="switchRealtime" class="tw-inline-block tw-ml-4" hide-details></v-switch>
       </div>
+
+      <hr class="tw-mt-4 tw-mb-4" v-if="selectedId"/>
+
       <StationInfo v-model="selectedId" />
     </div>
-    <div id="map" class="tw-h-full tw-w-full"/>
+    <div id="map" class="tw-h-full tw-w-full" />
   </div>
 </template>
 

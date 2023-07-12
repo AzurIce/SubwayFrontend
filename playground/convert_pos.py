@@ -11,7 +11,7 @@ for _, row in tqdm(list(df_id.iterrows())):
     # print(row)
     potential_station = None
     for _, r in list(df_station.iterrows()):
-        if (r['GTFS Latitude'] == row['Latitude'] and r['GTFS Longitude'] == row['Longitude']):
+        if (abs(r['GTFS Latitude'] - row['Latitude']) <= 0.00000001 and abs(r['GTFS Longitude'] - row['Longitude']) <= 0.00000001):
             potential_station = {
                 'id': int(row['Unique ID']),
                 'gtfs_id': r['GTFS Stop ID']
