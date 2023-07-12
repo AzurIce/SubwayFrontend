@@ -56,7 +56,7 @@ function parseTime(time) {
 export async function getData(id) {
   const date = new Date()
   // console.log(date)
-//   date.setFullYear(date.getFullYear() - 3)
+  //   date.setFullYear(date.getFullYear() - 3)
   date.setHours(Math.floor(date.getHours() / 4) * 4)
   // console.log(date)
 
@@ -102,14 +102,14 @@ export async function getAllTrue() {
 }
 
 export async function getHeatMapGeoJson() {
-console.log('lib/axios/data.js: getHeatMapGeoJson')
+  console.log('lib/axios/data.js: getHeatMapGeoJson')
   const res = await getAllTrue()
 
   let features = res.data.data.map((v) => {
     const stationInfo = stationData[v['GTFS_Stop_ID']]
     return {
       geometry: { coordinates: [stationInfo['longitude'], stationInfo['latitude']], type: 'Point' },
-      properties: { Entries: v['tEntries'], Exits: v['tExits'], id: v['GTFS_Stop_ID']}
+      properties: { Entries: v['tEntries'], Exits: v['tExits'], id: v['GTFS_Stop_ID'] }
     }
   })
   return {

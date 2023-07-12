@@ -137,8 +137,8 @@ async function allUpdate() {
     await updateTrainPositions()
     await updateHeatMap()
   } catch (error) {
-    console.log(error)
-    // msg.value = 'error'
+    // console.log(error)
+    msg.value = 'error'
   }
   loading.value = false
 }
@@ -369,7 +369,7 @@ const msg = ref('')
 </script>
 
 <template>
-  <SnackBar v-bind="msg" />
+  <SnackBar v-model="msg" />
   <v-overlay :model-value="overlay" class="align-center justify-center" :persistent="true">
     <div class="tw-flex tw-flex-col">
       <v-progress-circular color="white" indeterminate size="64">🫠</v-progress-circular>
