@@ -293,6 +293,8 @@
   align-items: center;
   justify-content: center;
   padding: 0 20px;
+  width: 230px;
+  height: 180px;
 }
 
 .rating {

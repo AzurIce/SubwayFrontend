@@ -73,9 +73,13 @@ const router = createRouter({
       component: TestPage
     },
     {
-      path: '/star',
-      name: 'star',
-      component: () => import('../components/Star.vue')
+      path: '/palltte',
+      name: 'palltte',
+      component: () => import('../components/Palltte.vue')
+    },{
+      path:'/star',
+      name:'star',
+      component:()=>import ('../components/Star.vue')
     }
   ]
 })

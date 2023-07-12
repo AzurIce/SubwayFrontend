@@ -15,6 +15,7 @@
       </v-btn>
       <h1 class="green">你一共点击了{{ count }}次</h1>
     </div>
+    
     <CommentColumnVue></CommentColumnVue>
   </div>
   
