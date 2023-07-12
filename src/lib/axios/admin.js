@@ -1,4 +1,4 @@
-import { get } from './axios'
+import { get, post } from './axios'
 
 export async function getUsers() {
     return await get('/user/all')
@@ -9,5 +9,14 @@ export async function deleteUser(id) {
 }
 
 export async function logout() {
-    return await get(`/user/logout`)
+    return  post(`/user/logout`)
+}
+
+export function updateUserInfo(id, name, mail, premission) {
+    return post(`/user/update`, {
+        id:id,
+        name:name,
+        mail:mail,
+        premission:premission,
+    })
 }

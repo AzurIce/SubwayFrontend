@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onUpdated, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import station_details from '../data/station_details.json'
 import { getData } from '../lib/axios/data'
 
@@ -13,17 +13,26 @@ const selected = computed(() => (props.modelValue != ''))
 const station = computed(() => station_details[props.modelValue] || {})
 
 // const loading = ref(false)
+let mounted = false;
 function updateData() {
+  if (myChart) {
+    myChart.dispose()
+  }
+  console.log(chart.value)
+  myChart = echarts.init(chart.value);
+  
+  myChart.showLoading();
   // loading.value = true
   getData(props.modelValue).then((res) => {
     // console.log(res)
-    if (myChart) {
-      myChart.dispose()
-    }
-    myChart = echarts.init(chart.value);
+    myChart.hideLoading();
     // loading.value = false
     // 绘制图表
     myChart.setOption({
+      grid: {
+        right: 0,
+        bottom: 100
+      },
       title: {
         text: '人流量图'
       },
@@ -34,7 +43,10 @@ function updateData() {
       // },
       tooltip: {},
       xAxis: {
-        data: res.map((v) => v.dateTime)
+        data: res.map((v) => v.dateTime.replace(':00:00', '时')),
+        axisLabel: {
+          rotate: 60
+        }
       },
       yAxis: {},
       series: [
@@ -55,31 +67,30 @@ function updateData() {
 
 let myChart = null
 const chart = ref(null)
-// onMounted(() => {
-//   console.log('onMounted')
-//   updateData()
-// })
-onUpdated(() => {
-  console.log('onUpdated')
-  if (selected.value) {
-    console.log("select"+selected.value)
+watch(() => props.modelValue, (newValue) => {
+  console.log('newValue: ', newValue)
+  if (newValue && mounted) {
+    console.log('updateData')
     updateData()
   }
-  console.log('更新结束')
+})
+
+onMounted(() => {
+  mounted = true
+  updateData()
 })
 
 </script>
 
 <template>
-  <div v-if="selected" class="tw-flex tw-flex-col">
-    <div class="tw-flex">
-      <v-btn icon="mdi-arrow-left-thin" @click="() => { $emit('update:modelValue', '') }" />
-      {{ props.modelValue }}
-      {{ station.name }}
-      {{ station.longitude }}
-      {{ station.latitude }}
+  <div class="tw-flex tw-flex-col tw-items-center tw-flex-1 tw-overflow-y-auto tw-overflow-x-hidden">
+    <div class="tw-flex tw-items-center tw-w-full tw-sticky tw-top-0 tw-bg-white tw-z-20 tw-pb-2">
+      <v-btn icon="mdi-arrow-left-thin" @click="() => { $emit('update:modelValue', '') }" size="small" />
+      <span class="tw-ml-4">{{ station.name }}</span>
+      <v-chip class="tw-ml-4">{{ props.modelValue }}</v-chip>
     </div>
+    <span class="tw-mt-2 tw-mb-2">Longitude: {{ station.longitude }}, Latitude: {{ station.latitude }}</span>
     <!-- <v-progress-circular color="white" indeterminate size="64" v-if="loading">🫠</v-progress-circular> -->
-    <div ref="chart" class="tw-h-80 tw-w-80" style="width: 40vw;"/>
+    <div ref="chart" class="tw-w-full tw-mb-5" style="height: 400px;" />
   </div>
 </template>
