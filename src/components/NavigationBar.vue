@@ -1,8 +1,7 @@
-v-btn
 <script setup>
 import router from '../router/index'
 import { ref } from 'vue'
-
+import {logout} from '../lib/axios/admin'
 import { useTokenStore } from '../stores/token'
 const tokenStore = useTokenStore()
 
@@ -12,6 +11,11 @@ const donateDialog = ref(false)
 function onLogout() {
   tokenStore.unSetToken()
   tokenStore.unSetPermission()
+  logout().then(() => {
+    console.log('logout')
+  }).catch((err) => {
+    console.log(err)
+  })
   router.push('/login')
 }
 
