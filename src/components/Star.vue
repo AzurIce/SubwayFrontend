@@ -86,15 +86,17 @@ export default {
 .container {
   margin:auto;
   position: relative;
-  min-width: 200px;
-  min-height: 200px;
+  min-width: 150px;
+  min-height: 150px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 .artboard {
-  width: 100%;
-  height: 100%;
+  /* width: 100%; */
+  /* height: 100%; */
+  width:150px;
+  height: 150px;
   background: white;
   border-radius: 50%;
   box-shadow: 0 15px 100px rgba(237, 57, 41, 0.7), 0 3px 35px rgba(0, 0, 0, 0.5);

@@ -1,18 +1,18 @@
 <template>
-  <div>
+  <div :style="{backgroundColor:backgroundColor}">
     <div class="top-section">
-      <div class="top-box">区域1</div>
+      <Palltte class="top-box" @changeColor="changeColor"></Palltte>
       <div class="top-box">区域2</div>
       <div class="top-box">区域3</div>
-      <Star class="top-box"></Star>
+      <Star class="top-box" style="height: 200px;width: 200px;"></Star>
     </div>
     <v-divider :thickness="3" class="border-opacity-75" color="info"></v-divider>
     <div class="bottom-section">
       <apexchart id="chartContainer" class="bottom-left" type="bar" :options="chartOptions" :series="series"></apexchart>
-      <div class="bottom-section-right">
+      <div class="bottom-section-right" style="overflow: hidden;">
         <v-parallax src="https://cdn.vuetifyjs.com/images/parallax/material2.jpg">
-          <div class="bottom-right-top" style="overflow: hidden">
-            <v-expansion-panels>
+          <div class="bottom-right-top" style="overflow: hidden;">
+            <v-expansion-panels style="background-color: aquamarine;">
               <v-expansion-panel title="attention" style="backgrund-color: aliceblue">
                 <v-expansion-panel-text>
                   请选择你所要查询的日期，以4个小时为单位，输入的默认格式如下为<br /> yyyy/MM/dd HH
@@ -20,7 +20,7 @@
               </v-expansion-panel>
             </v-expansion-panels>
             <br />
-            <v-text-field label="data" style="width: 50%; margin: 0% 5% 0% 15%"
+            <v-text-field label="data" style="width: 50%; margin: 0% 2% 0% 15%"
               hint="input the correct data"></v-text-field>
             <v-text-field label="station" style="width: 50%; margin: 0% 5% 0% 15%"
               hint="input the correct station"></v-text-field>
@@ -44,19 +44,33 @@
 import ApexCharts from 'apexcharts'
 // import NavigationBar from '../components/NavigationBar.vue'
 import Star from '@/components/Star.vue'
+import Palltte from '../../components/Palltte.vue'
+import { color } from 'echarts'
 
 export default {
   name: 'DataAnalysisDashboard',
   components: {
     // NavigationBar,
-    Star
+    Star,
+    Palltte
+  },
+  data(){
+    return {
+      backgroundColor:'#faebd7'
+    }
+  }, 
+  methods:{
+      changeColor(color){
+        // console.log("调用:"+color)
+        this.backgroundColor=color //点击按钮更改颜色
+      }
   },
   mounted() {
     const inputTime = {
       time: ''
     }
     // 模拟数据
-    const data = {
+    const Data = {
       labels: ['2023.7.11.0', '2023.7.11.4', '2023.7.11.8', '2023.7.11.12', '2023.7.11.16'],
       series: [
         {
@@ -83,9 +97,9 @@ export default {
       chart: {
         type: 'bar'
       },
-      series: data.series,
+      series: Data.series,
       xaxis: {
-        categories: data.labels
+        categories: Data.labels
       }
     }
 
@@ -94,9 +108,9 @@ export default {
       chart: {
         type: 'line'
       },
-      series: data.series,
+      series: Data.series,
       xaxis: {
-        categories: data.labels
+        categories: Data.labels
       }
     }
 
@@ -110,18 +124,20 @@ export default {
 </script> 
 
 <style scope>
-/* .container {
+
+.container {
+
   display: grid;
-  grid-template-rows: 22.5% 22.5% 22.5% 22.5%;
-  grid-template-rows: 25% 1% 70%;
+  grid-template-columns: 20% 20% 20% 20%;
+  grid-template-rows: 25% 3% 72%;
   height: 100%;
   width: 100%;
-  gap: 1%;
-} */
+  gap: 3%;
+}
 
 .top-section {
   display: flex;
-  gap: 4%;
+  gap: 2%;
 }
 
 .top-box {
@@ -131,7 +147,7 @@ export default {
 
 .bottom-section {
   display: flex;
-  gap: 4%;
+  gap: 2%;
 }
 
 .bottom-left {
@@ -144,13 +160,12 @@ export default {
 
 .bottom-section-right {
   flex: 1;
-  /* border: 1px solid black; */
   display: grid;
-  grid-template-rows: 48% 48%;
-  gap: 4%;
+  grid-template-rows: 53% 45%;
+  gap: 2%;
 }
 
-.bottom-right-top,
+/* .bottom-right-top, */
 .bottom-right-bottom {
   flex: 2;
   border: 1px solid black;

@@ -1,9 +1,9 @@
 
 <script setup>
-import { ref, reactive, onMounted, nextTick, computed } from 'vue'
+import { ref, reactive, onMounted, nextTick, computed ,defineEmits} from 'vue'
 
 const colors = [
-  { index: 0, color: '#ffe4e7' },
+  { index: 0, color: '#faebd7' },
   { index: 1, color: '#b98efb' },
   { index: 3, color: '#6ce4d8' },
   { index: 2, color: '#f6ff85' }
@@ -11,19 +11,24 @@ const colors = [
 
 const rotate = ref(0)
 const selectedIndex = ref(0)
+const selectedColor = computed(() => colors.find(color => color.index === selectedIndex.value)?.color || '')
 
 
+const props=defineProps({
+  backgroundColor:{
+    type:String,
+    required:true
+  }
+})
+const emit = defineEmits(['changeColor'])
 </script>
 
 
 <template>
-  <!-- <span class="tw-rotate-90">????</span> -->
-
-  <div class="fake-body">
-
-    <div class="wrap">
+  <div class="tw-flex-auto" :style="`background-color:${selectedColor};transition: background-color 0.3s ease-in-out`">
+    <div class="wrap tw-m-auto">
       <div :class="`tw-grid tw-grid-cols-2 tw-gap-2 tw-transition-all`" :style="`transform: rotate(${-(selectedIndex) * 90}deg);`">
-        <div :class="`selector ${selectedIndex == color.index ? 'tw-ring-2' : ''}`" :style="`background-color: ${color.color};`" @click="() => { selectedIndex = color.index }"
+        <div :class="`selector ${selectedIndex == color.index ? 'tw-ring-2' : ''}`" :style="`background-color: ${color.color};`" @click="() => { selectedIndex = color.index ;emit('changeColor',color.color)}"
           v-for="color in colors" v-bind:key="color.index"></div>
       </div>
     </div>
@@ -35,26 +40,18 @@ const selectedIndex = ref(0)
   --selected-color: #eaeaea;
 }
 
-fake-body {
-  display: grid;
-  place-content: center;
-  height: 100vh;
-  background-color: var(--selected-color);
-  transition: 0.5s ease;
-}
-
 .wrap {
   display: grid;
   place-content: center;
-  height: 100vh;
-  /* background-color: var(--selected-color); */
+  height: 25%;
+  width: max-content;
   transition: 0.5s ease;
 
   background: #fff;
   border-radius: 6px;
-  padding: 24px;
-  box-shadow: 0 4px 4px -6px rgba(0, 0, 0, 0.1), 0 8px 8px -6px rgba(0, 0, 0, 0.1),
-    0 12px 12px 0 rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  box-shadow: 0 4px 4px -6px rgba(0, 0, 0, 0.2), 0 8px 8px -6px rgba(0, 0, 0, 0.2),
+    0 12px 12px 0 rgba(0, 0, 0, 0.2);
 }
 
 .wrap-inner {
