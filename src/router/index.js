@@ -1,13 +1,14 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import LoginPage from '../pages/LoginPage.vue'
-import HomePage from '../pages/HomePage.vue'
-import AboutPage from '../pages/AboutPage.vue'
-import TestPage from '../pages/TestPage.vue'
-import CountPage from '../pages/CountPage.vue'
-import AdminPage from '../pages/AdminPage.vue'
-import MainPage from '../pages/MainPage.vue'
+import LoginPage from '@/pages/LoginPage.vue'
+import AboutPage from '@/pages/AboutPage.vue'
+import TestPage from '@/pages/TestPage.vue'
 
-import { useTokenStore } from '../stores/token'
+import MainPage from '@/pages/MainPage.vue'
+import HomePage from '@/pages/main/HomePage.vue'
+import CountPage from '@/pages/main/CountPage.vue'
+import AdminPage from '@/pages/main/AdminPage.vue'
+
+import { useTokenStore } from '@/stores/token'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
