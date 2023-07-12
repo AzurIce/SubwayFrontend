@@ -1,5 +1,5 @@
 <template>
-  <SnackBar v-model="msg"/>
+  <SnackBar v-model="msg" />
   <div :style="{ backgroundColor: backgroundColor, transition: 'background-color 0.4s ease-in-out' }">
 
     <div class="top-section">
@@ -10,30 +10,34 @@
     </div>
     <v-divider :thickness="3" class="border-opacity-75" color="info"></v-divider>
     <div class="bottom-section">
-      <apexchart id="chartContainer" class="bottom-left" type="bar" :options="chartOptions" :series="series"></apexchart>
+      <!-- <apexchart id="chartContainer" class="bottom-left" type="bar" :options="chartOptions" :series="series"></apexchart> -->
+      <apexchart id="chartContainer" class="bottom-left" type="bar"></apexchart>
       <div class="bottom-section-right" style="overflow: hidden;">
         <v-parallax src="https://cdn.vuetifyjs.com/images/parallax/material2.jpg" :contain="true">
           <div class="bottom-right-top" style="overflow: hidden;">
-            <v-expansion-panels >
+            <v-expansion-panels>
               <v-expansion-panel title="注意事项" style="backgrund-color: aliceblue">
                 <v-expansion-panel-text>
-                  1.请输入你所要查询的日期，以4个小时为单位<br />示例值: 2017-02-04 04:00:00<br/>
-                  2.输入你所要查询的站点 <br />示例值 R01<br/>
+                  1.请输入你所要查询的日期，以4个小时为单位<br />示例值: 2017-02-04 04:00:00<br />
+                  2.输入你所要查询的站点 <br />示例值 R01<br />
                   3.输入你所要查询的事件段<br />
                 </v-expansion-panel-text>
               </v-expansion-panel>
             </v-expansion-panels>
             <br />
-           
+
             <v-row>
               <v-col cols="4">
-                <v-text-field v-model="data" label="data" style="width: 100%" hint="input the correct data" :rules="[()=>(data!='')||'日期不可为空']"></v-text-field>
+                <v-text-field v-model="data" label="data" style="width: 100%" hint="input the correct data"
+                  :rules="[() => (data != '') || '日期不可为空']"></v-text-field>
               </v-col>
               <v-col cols="4">
-                <v-text-field v-model="station" label="station" style="width: 100%" hint="input the correct station" :rules="[()=>(station!='')||'站点不能为空']"></v-text-field>
+                <v-text-field v-model="station" label="station" style="width: 100%" hint="input the correct station"
+                  :rules="[() => (station != '') || '站点不能为空']"></v-text-field>
               </v-col>
               <v-col cols="4">
-                <v-text-field v-model="period" label="period" style="width: 100%" hint="input the correct period" :rules="[()=>(period!='')||'时间段不能为空']"></v-text-field>
+                <v-text-field v-model="period" label="period" style="width: 100%" hint="input the correct period"
+                  :rules="[() => (period != '') || '时间段不能为空']"></v-text-field>
               </v-col>
             </v-row>
             <v-row>
@@ -44,7 +48,8 @@
           </div>
         </v-parallax>
 
-        <apexchart id="lineContainer" class="bottom-right-bottom" type="line" :options="chartOptions" :series="series">
+        <!-- <apexchart id="lineContainer" class="bottom-right-bottom" type="line" :options="chartOptions" :series="series"> -->
+        <apexchart id="lineContainer" class="bottom-right-bottom" type="line">
         </apexchart>
       </div>
     </div>
@@ -58,6 +63,8 @@ import Star from '@/components/Star.vue'
 import Palltte from '../../components/Palltte.vue'
 import SnackBar from '../../components/SnackBar.vue'
 
+import { getData } from '../../lib/axios/data'
+
 import { color } from 'echarts'
 
 export default {
@@ -70,76 +77,150 @@ export default {
   data() {
     return {
       backgroundColor: '#faebd7',
-      data:'',
-      station:'',
-      period:'',
-      msg:''
+      data: '',
+      station: '',
+      period: '',
+      msg: '',
+      chartData: {
+        // labels: ['2023.7.11.0', '2023.7.11.4', '2023.7.11.8', '2023.7.11.12', '2023.7.11.16'],
+        labels: [],
+        series: []
+        // series: [
+        //   {
+        //     name: 'InActual',
+        //     data: [3500, 4200, 2800, 5200, 4800]
+        //   },
+        //   {
+        //     name: 'InForecast',
+        //     data: [1500, 3200, 1800, 3200, 2800]
+        //   },
+        //   {
+        //     name: 'OutActual',
+        //     data: [4133, 2134, 3243, 1243, 6544]
+        //   },
+        //   {
+        //     name: 'OutForecast',
+        //     data: [424, 3253, 1322, 2324, 4355]
+        //   }
+        // ]
+      },
+      barOptions: {
+        chart: {
+          type: 'bar'
+        },
+        grid: {
+          right: 0,
+          bottom: 100
+        },
+        title: {
+          text: '人流量图',
+          align: 'center',
+        },
+        series: [],
+        xaxis: {
+          categories: [],
+          axisLabel: {
+            rotate: 60
+          }
+        }
+      },
+      lineOptions: {
+        chart: {
+          type: 'line'
+        },
+        grid: {
+          right: 0,
+          bottom: 100
+        },
+        title: {
+          text: '人流量图',
+          align: 'center',
+        },
+        series: [],
+        xaxis: {
+          categories: [],
+          axisLabel: {
+            rotate: 60
+          }
+        }
+      }
     }
   },
   methods: {
     changeColor(color) {
       this.backgroundColor = color //点击按钮更改颜色
     },
-    submit(){
-      console.log(this.data+"  "+this.station+"  "+this.period);
+    initChart() {
+      this.barOptions.series = this.chartData.series;
+      this.barOptions.xaxis.categories = this.chartData.labels;
 
+      this.barChart = new ApexCharts(document.querySelector('#chartContainer'), this.barOptions);
+      this.barChart.render();
 
+      this.lineOptions.series = this.chartData.series;
+      this.lineOptions.xaxis.categories = this.chartData.labels;
+      this.linechart = new ApexCharts(document.querySelector('#lineContainer'), this.lineOptions)
+      this.linechart.render();
+    },
+    submit() {
+      console.log(this.data + "  " + this.station + "  " + this.period);
+      getData(this.station).then((res) => {
+        this.msg = '获取成功'
+        this.barChart.updateOptions({
+          xAxis: {
+            data: res.map((v) => v.dateTime.replace(':00:00', '时')),
+            axisLabel: {
+              rotate: 60
+            }
+          },
+          series: [
+            {
+              name: '出战人数',
+              type: 'bar',
+              data: res.map((v) => v.tExits)
+            },
+            {
+              name: '入站人数',
+              type: 'bar',
+              data: res.map((v) => v.tEntries)
+            }
+          ]
+        })
+
+        this.linechart.updateOptions({
+          xAxis: {
+            data: res.map((v) => v.dateTime.replace(':00:00', '时')),
+            axisLabel: {
+              rotate: 60
+            }
+          },
+          series: [
+            {
+              name: '出战人数',
+              type: 'line',
+              data: res.map((v) => v.tExits)
+            },
+            {
+              name: '入站人数',
+              type: 'line',
+              data: res.map((v) => v.tEntries)
+            }
+          ]
+        })
+
+      }).catch((err) => {
+        this.msg = `获取失败:${err}`
+        console.log(err)
+      }).finally(() => {
+
+      })
     }
   },
   mounted() {
     const inputTime = {
       time: ''
     }
-    // 模拟数据
-    const Data = {
-      labels: ['2023.7.11.0', '2023.7.11.4', '2023.7.11.8', '2023.7.11.12', '2023.7.11.16'],
-      series: [
-        {
-          name: 'InActual',
-          data: [3500, 4200, 2800, 5200, 4800]
-        },
-        {
-          name: 'InForecase',
-          data: [1500, 3200, 1800, 3200, 2800]
-        },
-        {
-          name: 'OutActual',
-          data: [4133, 2134, 3243, 1243, 6544]
-        },
-        {
-          name: 'OutForecase',
-          data: [424, 3253, 1322, 2324, 4355]
-        }
-      ]
-    }
-
-    // 创建柱状图
-    const options = {
-      chart: {
-        type: 'bar'
-      },
-      series: Data.series,
-      xaxis: {
-        categories: Data.labels
-      }
-    }
-
-    //创建折线图
-    const lineoptions = {
-      chart: {
-        type: 'line'
-      },
-      series: Data.series,
-      xaxis: {
-        categories: Data.labels
-      }
-    }
-
-    const chart = new ApexCharts(document.querySelector('#chartContainer'), options)
-    chart.render()
-
-    const linechart = new ApexCharts(document.querySelector('#lineContainer'), lineoptions)
-    linechart.render()
+    this.initChart()
   }
 }
 </script> 

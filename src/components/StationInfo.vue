@@ -36,11 +36,6 @@ function updateData() {
       title: {
         text: '人流量图'
       },
-      // legend: {
-      //   orient: 'vertical',
-      //   right: 10,
-      //   top: 'center'
-      // },
       tooltip: {},
       xAxis: {
         data: res.map((v) => v.dateTime.replace(':00:00', '时')),
