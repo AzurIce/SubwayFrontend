@@ -21,7 +21,7 @@
     // Add a geojson point source.
     map.addSource('stationMes', {
         'type': 'geojson',
-        'data':'../tes.geojson'  //到时候交互读取数据
+        'data':'tes.geojson'  //到时候交互读取数据
     });
    
     map.addLayer(
