@@ -9,7 +9,7 @@ import * as echarts from 'echarts'
 const props = defineProps(['modelValue'])
 defineEmits(['update:modelValue'])
 
-const selected = computed(() => (props.modelValue != ''))
+// const selected = computed(() => (props.modelValue != ''))
 const station = computed(() => station_details[props.modelValue] || {})
 
 // const loading = ref(false)
