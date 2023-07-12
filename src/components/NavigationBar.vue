@@ -1,29 +1,3 @@
-<template>
-    <v-app-bar :elevation="2" title="地铁客流量预测系统">
-      <v-btn icon="mdi-heart">
-          $ 
-          <v-dialog 
-            v-model="donateDialog"
-            activator="parent"
-            width="auto"
-          >
-            <v-card>
-              <v-img src="src/assets/showMeMoney.jpg" contain height="300"></v-img>
-              <v-card-text style="text-align: center;">
-                我很可爱请给我钱
-              </v-card-text>
-              <v-card-actions>
-                <v-btn color="primary" block @click="donateDialog = false">Close</v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
-      </v-btn>
-      <v-btn class="tw-text-purple" v-if="tokenStore.isAdmin()" @click="() => { router.push('/admin') }">管理</v-btn>
-      <v-btn icon="mdi-currency-usd" @click="() => {donateDialog = true}" />
-      <v-btn icon="mdi-poll" @click="onCountIT()"></v-btn>
-      <v-btn icon="mdi-exit-run" @click="onLogout()"></v-btn>
-    </v-app-bar>
-</template>
 
 <script setup>
 import router from '../router/index'
@@ -37,15 +11,29 @@ const donateDialog = ref(false)
 //exit
 function onLogout() {
   tokenStore.unSetToken()
+  tokenStore.unSetPermission()
   router.push('/login')
 }
 
-//count
-function onCountIT(){
-    router.push('/count')
-}  
-
 </script>
 
-<style scoped>
-</style>
+<template>
+  <v-dialog v-model="donateDialog" width="auto">
+    <v-card>
+      <v-img src="src/assets/showMeMoney.jpg" contain height="300"></v-img>
+      <v-card-text>
+        我很可爱请给我钱
+      </v-card-text>
+      <v-card-actions>
+        <v-btn color="primary" block @click="donateDialog = false">Close</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+  <v-app-bar :elevation="2" title="地铁客流量预测系统">
+    <v-btn class="tw-text-purple" v-if="tokenStore.isAdmin()" @click="() => { router.push('/admin') }">管理</v-btn>
+    <v-btn icon="mdi-currency-usd" @click="() => { donateDialog = true }" />
+    <v-btn icon="mdi-poll" @click="() => { router.push('/count') }"></v-btn>
+    <v-btn icon="mdi-exit-run" @click="onLogout()"></v-btn>
+  </v-app-bar>
+</template>
+<style scoped></style>

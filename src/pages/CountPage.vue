@@ -1,80 +1,52 @@
- <template>
-  <v-layout class="tw-h-full">
-    <NavigationBar></NavigationBar>
-    <v-main class="tw-h-full">
-      <div class="container" style="margin-top: 1%">
-        <div class="top-section">
-          <div class="top-box">区域1</div>
-          <div class="top-box">区域2</div>
-          <div class="top-box">区域3</div>
-          <Star class="top-box"></Star>
-        </div>
-        <v-divider :thickness="3" class="border-opacity-75" color="info"></v-divider>
-        <div class="bottom-section">
-          <apexchart
-            id="chartContainer"
-            class="bottom-left"
-            type="bar"
-            :options="chartOptions"
-            :series="series"
-          ></apexchart>
-          <div class="bottom-section-right">
-            <v-parallax src="https://cdn.vuetifyjs.com/images/parallax/material2.jpg">
-              <div class="bottom-right-top" style="overflow: hidden">
-                <v-expansion-panels>
-                  <v-expansion-panel
-                    title="attention"
-                    text="请选择你所要查询的日期，以4个小时为单位，输入的默认格式如下为<br /> yyyy/MM/dd HH"
-                    style="background-color: aliceblue"
-                  >
-                  </v-expansion-panel>
-                </v-expansion-panels>
-                <br />
-                <v-text-field
-                  label="data"
-                  style="width: 50%; margin: 0% 5% 0% 15%"
-                  hint="input the correct data"
-                ></v-text-field>
-                <v-text-field
-                  label="station"
-                  style="width: 50%; margin: 0% 5% 0% 15%"
-                  hint="input the correct station"
-                ></v-text-field>
-                <v-text-field
-                  label="period"
-                  style="width: 50%; margin: 0% 5% 0% 15%"
-                  hint="input the correct period"
-                ></v-text-field>
-                <v-btn color="blue" style="margin-left: 35%">confirm</v-btn>
-              </div>
-            </v-parallax>
-
-            <!-- <div class="bottom-right-bottom">区域6-下</div> -->
-
-            <apexchart
-              id="lineContainer"
-              class="bottom-right-bottom"
-              type="line"
-              :options="chartOptions"
-              :series="series"
-            ></apexchart>
+<template>
+  <div class="container" style="margin-top: 1%">
+    <div class="top-section">
+      <div class="top-box">区域1</div>
+      <div class="top-box">区域2</div>
+      <div class="top-box">区域3</div>
+      <Star class="top-box"></Star>
+    </div>
+    <v-divider :thickness="3" class="border-opacity-75" color="info"></v-divider>
+    <div class="bottom-section">
+      <apexchart id="chartContainer" class="bottom-left" type="bar" :options="chartOptions" :series="series"></apexchart>
+      <div class="bottom-section-right">
+        <v-parallax src="https://cdn.vuetifyjs.com/images/parallax/material2.jpg">
+          <div class="bottom-right-top" style="overflow: hidden">
+            <v-expansion-panels>
+              <v-expansion-panel title="attention" text="请选择你所要查询的日期，以4个小时为单位，输入的默认格式如下为<br /> yyyy/MM/dd HH"
+                style="background-color: aliceblue">
+              </v-expansion-panel>
+            </v-expansion-panels>
+            <br />
+            <v-text-field label="data" style="width: 50%; margin: 0% 5% 0% 15%"
+              hint="input the correct data"></v-text-field>
+            <v-text-field label="station" style="width: 50%; margin: 0% 5% 0% 15%"
+              hint="input the correct station"></v-text-field>
+            <v-text-field label="period" style="width: 50%; margin: 0% 5% 0% 15%"
+              hint="input the correct period"></v-text-field>
+            <v-btn color="blue" style="margin-left: 35%">confirm</v-btn>
           </div>
-        </div>
+        </v-parallax>
+
+        <!-- <div class="bottom-right-bottom">区域6-下</div> -->
+
+        <apexchart id="lineContainer" class="bottom-right-bottom" type="line" :options="chartOptions" :series="series">
+        </apexchart>
       </div>
-    </v-main>
-  </v-layout>
+    </div>
+  </div>
 </template>
 
 
 <script>
 import ApexCharts from 'apexcharts'
-import NavigationBar from '../components/NavigationBar.vue'
+// import NavigationBar from '../components/NavigationBar.vue'
 import Star from '../components/Star.vue'
 
 export default {
   name: 'DataAnalysisDashboard',
   components: {
-    NavigationBar,
+    // NavigationBar,
     Star
   },
   mounted() {
