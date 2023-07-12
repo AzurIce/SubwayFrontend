@@ -43,7 +43,7 @@ const emit = defineEmits(['changeColor'])
 .wrap {
   display: grid;
   place-content: center;
-  height: 25%;
+  height: 22%;
   width: max-content;
   transition: 0.5s ease;
 
