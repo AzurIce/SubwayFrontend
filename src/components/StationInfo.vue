@@ -13,10 +13,12 @@ const selected = computed(() => (props.modelValue != ''))
 const station = computed(() => station_details[props.modelValue] || {})
 
 // const loading = ref(false)
+let mounted = false;
 function updateData() {
   if (myChart) {
     myChart.dispose()
   }
+  console.log(chart.value)
   myChart = echarts.init(chart.value);
   
   myChart.showLoading();
@@ -67,19 +69,21 @@ let myChart = null
 const chart = ref(null)
 watch(() => props.modelValue, (newValue) => {
   console.log('newValue: ', newValue)
-  if (newValue) {
+  if (newValue && mounted) {
+    console.log('updateData')
     updateData()
   }
 })
 
 onMounted(() => {
-
+  mounted = true
+  updateData()
 })
 
 </script>
 
 <template>
-  <div v-if="selected" class="tw-flex tw-flex-col tw-items-center tw-flex-1 tw-overflow-y-auto tw-overflow-x-hidden">
+  <div class="tw-flex tw-flex-col tw-items-center tw-flex-1 tw-overflow-y-auto tw-overflow-x-hidden">
     <div class="tw-flex tw-items-center tw-w-full tw-sticky tw-top-0 tw-bg-white tw-z-20 tw-pb-2">
       <v-btn icon="mdi-arrow-left-thin" @click="() => { $emit('update:modelValue', '') }" size="small" />
       <span class="tw-ml-4">{{ station.name }}</span>
@@ -87,6 +91,6 @@ onMounted(() => {
     </div>
     <span class="tw-mt-2 tw-mb-2">Longitude: {{ station.longitude }}, Latitude: {{ station.latitude }}</span>
     <!-- <v-progress-circular color="white" indeterminate size="64" v-if="loading">🫠</v-progress-circular> -->
-    <div ref="chart" class="tw-w-full tw-mb-5" style="height: 400px;"></div>
+    <div ref="chart" class="tw-w-full tw-mb-5" style="height: 400px;" />
   </div>
 </template>

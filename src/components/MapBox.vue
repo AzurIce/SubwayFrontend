@@ -233,7 +233,7 @@ function switchRealtime(res) {
 
       <hr class="tw-mt-4 tw-mb-4" v-if="selectedId"/>
 
-      <StationInfo v-model="selectedId" />
+      <StationInfo v-model="selectedId" v-if="selectedId"/>
     </div>
     <div id="map" class="tw-h-full tw-w-full" />
   </div>
