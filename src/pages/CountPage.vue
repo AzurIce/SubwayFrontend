@@ -7,7 +7,6 @@
           <div class="top-box">区域1</div>
           <div class="top-box">区域2</div>
           <div class="top-box">区域3</div>
-          <!-- <div class="top-box">区域4</div> -->
           <Star class="top-box"></Star>
         </div>
         <v-divider :thickness="3" class="border-opacity-75" color="info"></v-divider>
@@ -51,16 +50,14 @@
             </v-parallax>
 
             <!-- <div class="bottom-right-bottom">区域6-下</div> -->
-          
+
             <apexchart
-            id="lineContainer"
-            class="bottom-right-bottom"
-            type="line"
-            :options="chartOptions"
-            :series="series"
-          ></apexchart>
-
-
+              id="lineContainer"
+              class="bottom-right-bottom"
+              type="line"
+              :options="chartOptions"
+              :series="series"
+            ></apexchart>
           </div>
         </div>
       </div>
@@ -98,7 +95,7 @@ export default {
         },
         {
           name: 'OutActual',
-          data: [4133, 2134, 3243,1243, 6544]
+          data: [4133, 2134, 3243, 1243, 6544]
         },
         {
           name: 'OutForecase',
@@ -119,9 +116,9 @@ export default {
     }
 
     //创建折线图
-    const lineoptions ={
-      chart:{
-        type:'line'
+    const lineoptions = {
+      chart: {
+        type: 'line'
       },
       series: data.series,
       xaxis: {
@@ -132,7 +129,7 @@ export default {
     const chart = new ApexCharts(document.querySelector('#chartContainer'), options)
     chart.render()
 
-    const linechart=new ApexCharts(document.querySelector('#lineContainer'),lineoptions)
+    const linechart = new ApexCharts(document.querySelector('#lineContainer'), lineoptions)
     linechart.render()
   }
 }
