@@ -324,21 +324,16 @@ export const useMapStore = defineStore('goodservice', () => {
     if (refreshData) {
       await updateData()
     }
-    let routesGeoJson = {}
+    let features = []
     Object.keys(trains.value).forEach((key) => {
-      // console.log(`Rendering route ${key}...`)
-      // calc(key)
       if (!processedRoutings.value[key].length) {
         return
       }
-      // console.log(`processedRoutings[${key}]: `, processedRoutings.value[key])
+
       const coordinates = processedRoutings.value[key].map((r) => {
         return getRoutePath(r)
       })
-      // console.log(geojson)
 
-      // console.log(key)
-      // console.log(offsets.value)
       const route = trains.value[key]
       const geojson = {
         type: 'Feature',
@@ -352,9 +347,14 @@ export const useMapStore = defineStore('goodservice', () => {
           coordinates: coordinates
         }
       }
-      routesGeoJson[key] = geojson
+      features.push(geojson)
     })
-    return routesGeoJson
+    
+    const geojson = {
+      'type': 'FeatureCollection',
+      'features': features
+    }
+    return geojson
   }
 
   function calculateTrainPositions(currentTime) {

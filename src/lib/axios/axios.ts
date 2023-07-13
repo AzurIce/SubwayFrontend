@@ -5,7 +5,7 @@ import axios from 'axios'
 // const host = 'http://120.46.129.79:3308'
 const host = 'http://124.70.109.243:3308'
 
-export function get(url) {
+export function get(url: string): Promise<any> {
   return new Promise((resolve, reject) => {
     axios
       .get(`${host}${url}`, {
@@ -15,7 +15,7 @@ export function get(url) {
         }
       })
       .then((res) => {
-        if (res.data.code != '200000') {
+        if (res.data.code != '200 OK') {
           reject(res.data.msg)
         } else {
           resolve(res)
@@ -27,7 +27,7 @@ export function get(url) {
   })
 }
 
-export function post(url, data, withToken) {
+export function post(url: string, data: any, withToken: boolean): Promise<any> {
   const options = withToken
     ? {
         timeout: 3000,
@@ -42,7 +42,7 @@ export function post(url, data, withToken) {
     axios
       .post(`${host}${url}`, data, options)
       .then((res) => {
-        if (res.data.code != '200000') {
+        if (res.data.code != '200 OK') {
           reject(res.data.msg)
         } else {
           resolve(res)
