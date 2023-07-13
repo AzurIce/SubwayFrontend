@@ -210,7 +210,7 @@ async function updateHeatMap() {
             0,
             2,
             13,
-            20
+            30
           ],
           // Transition from heatmap to circle layer by zoom level
           'heatmap-opacity': [ //到9的时候热力图透明度为0
