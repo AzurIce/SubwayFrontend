@@ -109,8 +109,7 @@ export async function getOverload(): Promise<any> {
   const month = ('0' + (now.getMonth() + 1)).slice(-2);
   const day = ('0' + now.getDate()).slice(-2);
   let hours = parseInt(('0' + now.getHours()).slice(-2));
-  hours = hours + (hours % 4);
-  const formattedTime = year + "-" + month + "-" + day +" "+ hours+":00:00";
-  console.log(formattedTime)
+  hours = hours + (4 - hours % 4);
+  const formattedTime = year + "-" + month + "-" + day + " " + hours + ":00:00";
   return await get(`/warning?dateTime=${formattedTime}`)
 }
