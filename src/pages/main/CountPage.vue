@@ -7,7 +7,7 @@
       <div class="top-box">
         <v-date-picker></v-date-picker>
       </div>
-        
+
       <div class="top-box">区域3</div>
       <Star class="top-box top-box-fourth"></Star>
     </div>
@@ -79,7 +79,7 @@ export default {
       station: '',
       period: '',
       msg: '',
-      stations: ['R01'],
+      stations: [],
       chartData: {
         labels: [],
         series: []
@@ -227,6 +227,7 @@ export default {
       })
       // } 
     }
+
   },
   mounted() {
     const inputTime = {
@@ -234,7 +235,14 @@ export default {
     }
     this.initChart()
     this.data = getCurData()
-    console.log(getAllStations())
+    getAllStations().then((response) => {
+      const data = response.data;
+      const gtfsStopIds = data.data.map(obj => obj.GTFS_Stop_ID);
+      this.stations=gtfsStopIds
+
+    }).catch(error => {
+      console.error(error);
+    });
 
   }
 }
