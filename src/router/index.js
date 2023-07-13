@@ -10,6 +10,7 @@ import AdminPage from '@/pages/main/AdminPage.vue'
 import WarningPage from '@/pages/main/WarningPage.vue'
 import { useTokenStore } from '@/stores/token'
 
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -51,7 +52,7 @@ const router = createRouter({
           meta: {
             requireAuth: true
           },
-        }
+        },
       ]
     },
     {

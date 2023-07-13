@@ -4,13 +4,15 @@
 
     <div class="top-section">
       <Palltte class="top-box top-box-first" @changeColor="changeColor"></Palltte>
-      <div class="top-box">区域2</div>
+      <div class="top-box">
+        <v-date-picker></v-date-picker>
+      </div>
+        
       <div class="top-box">区域3</div>
       <Star class="top-box top-box-fourth"></Star>
     </div>
     <v-divider :thickness="3" class="border-opacity-75" color="info"></v-divider>
     <div class="bottom-section">
-      <!-- <apexchart id="chartContainer" class="bottom-left" type="bar" :options="chartOptions" :series="series"></apexchart> -->
       <apexchart id="chartContainer" class="bottom-left" type="bar"></apexchart>
       <div class="bottom-section-right" style="overflow: hidden;">
         <v-parallax src="https://cdn.vuetifyjs.com/images/parallax/material2.jpg" :contain="true">
@@ -27,17 +29,13 @@
 
             <v-row>
               <v-col cols="6">
-                <v-text-field v-model="data" label="时间" style="width: 100%;font-size: 6px;"
-                  hint="input the correct data" :rules="[() => (data != '') || '*日期取默认值']"></v-text-field>
+                <v-text-field v-model="data" label="时间" style="width: 100%;font-size: 6px;" hint="input the correct data"
+                  :rules="[() => (data != '') || '*日期取默认值']"></v-text-field>
               </v-col>
               <v-col cols="6">
-                <!-- <v-autocomplete v-model="station" chips label="站点" style="width:100%" hint="input the correct station"
-
-                  :items="['California', 'Colorado', 'Florida', 'Georgia', 'Texas', 'Wyoming']">
-                </v-autocomplete> -->
-
-                <v-text-field v-model="station" label="station" style="width: 100%" hint="input the correct station"
-                  :rules="[() => (station != '') || '站点不能为空']"></v-text-field>
+                <v-autocomplete v-model="station" chips label="站点" style="width:100%" hint="input the correct station"
+                  :rules="[() => (station != '') || '站点不能为空']" :items=stations>
+                </v-autocomplete>
               </v-col>
 
             </v-row>
@@ -81,6 +79,7 @@ export default {
       station: '',
       period: '',
       msg: '',
+      stations: ['R01'],
       chartData: {
         labels: [],
         series: []
@@ -164,7 +163,7 @@ export default {
           },
           series: [
             {
-              name: '出战人数',
+              name: '出站人数',
               type: 'bar',
               data: res.map((v) => {
                 return {
@@ -199,7 +198,7 @@ export default {
           },
           series: [
             {
-              name: '出战人数',
+              name: '出站人数',
               type: 'line',
               data: res.map((v) => {
                 return {
@@ -235,7 +234,7 @@ export default {
     }
     this.initChart()
     this.data = getCurData()
-    // console.log(getAllStations())
+    console.log(getAllStations())
 
   }
 }

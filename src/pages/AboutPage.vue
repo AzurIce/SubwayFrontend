@@ -1,6 +1,8 @@
 <template>
   <div class="about">
     <div class="con">
+      <v-btn icon="mdi-open-in-new" size="large" style="position: fixed;top: 3%;left: 3%; z-index: 3;" @click="exit()" ></v-btn>
+      <!-- <v-btn icon="mdi-open-in-new" size="large" @click="exit()"></v-btn> -->
       <h1 class="green tw-text-center">北京交通大学软件学院2023暑期实训项目</h1>
       <h2 class="green jump">
         <span>自</span>
@@ -15,7 +17,8 @@
       </v-btn>
       <h1 class="green">你一共点击了{{ count }}次</h1>
     </div>
-    
+    <SliderVue style="justify-content: center;width:100%;height: 50%"></SliderVue>
+
     <CommentColumnVue></CommentColumnVue>
   </div>
   
@@ -25,6 +28,9 @@
 
 import { ref } from 'vue';
 import CommentColumnVue from '../components/CommentColumn.vue';
+import SliderVue from '../components/Slider.vue';
+import { useRouter } from 'vue-router'
+const router = useRouter()
 
 const count = ref(0);
 
@@ -32,6 +38,9 @@ function addCount() {
   count.value++;
 }
 
+function exit(){
+  router.push('/login')
+}
 
 </script>
 
@@ -68,16 +77,17 @@ h2 {
   text-align: center;
   align-items: center;
   position: absolute;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  background-repeat: repeat-y;
   top: 0;
   left: 0;
   bottom: 0;
   right: 0;
-}
 
-/* change */
+  background-size: cover;
+  background-position: center;
+  background-repeat: repeat-y;
+
+}
 
 .jump {
   height: 60px;
