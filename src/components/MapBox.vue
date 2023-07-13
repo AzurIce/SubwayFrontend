@@ -24,6 +24,8 @@ watch(enableHeatMap, (newVal) => {
   map.setLayoutProperty('StationEntry-heat', 'visibility', newVal ? 'visible' : 'none')
   if (!map.getLayer('StationEntry-point')) return
   map.setLayoutProperty('StationEntry-point', 'visibility', newVal ? 'visible' : 'none')
+  if (!map.getLayer('heatmap-labels')) return
+  map.setLayoutProperty('heatmap-labels', 'visibility', newVal ? 'visible' : 'none')
 })
 watch(enableRoute, (newVal) => {
   // console.log(routeIds)
@@ -320,6 +322,37 @@ async function updateHeatMap() {
       'waterway-label'
     );
     map.setLayoutProperty('StationEntry-point', 'visibility', enableHeatMap.value ? 'visible' : 'none')
+  }
+
+  if (!map.getLayer('heatmap-labels')) {
+    map.addLayer(
+        {
+            'id':'heatmap-labels',
+            'type':'symbol',
+            'source':'stationMes',
+            'minZoom':11,
+            'layout':{
+                'text-field':['get','Entries'],
+                'text-variable-anchor':['top'],
+                'text-radial-offset':1,
+                'text-justify':'auto',
+                'text-size':12
+            },
+            'paint':{
+                'text-color':'rgb(165,207,213)',
+                'text-opacity':[
+                    'interpolate',
+                    ['linear'],
+                    ['zoom'],
+                    10,
+                    0,
+                    10.5,
+                    1
+                ]
+            }
+        }
+    )
+    map.setLayoutProperty('heatmap-labels', 'visibility', enableHeatMap.value ? 'visible' : 'none')
   }
 
 }
