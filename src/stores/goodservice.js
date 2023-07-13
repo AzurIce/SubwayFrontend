@@ -27,27 +27,21 @@ const routeIds = [
 import stationData from '../data/station_details.json'
 function initStations() {
   let stations = {}
-  // console.log('initStations...')
   Object.keys(stationData).forEach((key) => {
     stations[key] = stationData[key]
     stations[key]['id'] = key
     stations[key]['northStops'] = new Set()
     stations[key]['southStops'] = new Set()
-    stations[key]['passed'] = new Set()
     stations[key]['stops'] = new Set()
-    stations[key]['transfers'] = new Set()
-    stations[key]['busTransfers'] = []
-    stations[key]['connections'] = []
-    // stationLocations[`${stationData[key].longitude}-${stationData[key].latitude}`] = key
   })
   return stations
 }
 
+import { getUpdateData } from '@/lib/axios/goodservice'
+
 export const useMapStore = defineStore('goodservice', () => {
   const trains = ref([])
-  const stops = ref([])
-  const blogPost = ref({})
-  const timestamp = ref(0)
+  const stops = ref({})
   const stations = ref(initStations())
   const processedRoutings = ref({})
   const routingByDirection = ref({})
@@ -114,21 +108,26 @@ export const useMapStore = defineStore('goodservice', () => {
   }
 
   function processRoutings() {
-    Object.keys(stationData).forEach((key) => {
-      stations[key] = stationData[key]
-      stations[key]['passed'] = new Set()
-      stations[key]['stops'] = new Set(Object.keys(stops.value[key].routes))
-      stations[key]['northStops'] = new Set(
-        Object.keys(stops.value[key].routes).filter((trainId) => {
-          return stops.value[key].routes[trainId].includes('north')
+    // console.log('> processRoutings')
+    // console.log(stops)
+    Object.keys(stationData).forEach((stationKey) => {
+      // console.log(stationKey)
+      stations[stationKey] = stationData[stationKey]
+      // stations[stationKey]['passed'] = new Set()
+      stations[stationKey]['stops'] = new Set(Object.keys(stops.value.get(stationKey).routes))
+      stations[stationKey]['northStops'] = new Set(
+        Object.keys(stops.value.get(stationKey).routes).filter((trainId) => {
+          return stops.value.get(stationKey).routes[trainId].includes('north')
         })
       )
-      stations[key]['southStops'] = new Set(
-        Object.keys(stops.value[key].routes).filter((trainId) => {
-          return stops.value[key].routes[trainId].includes('south')
+      stations[stationKey]['southStops'] = new Set(
+        Object.keys(stops.value.get(stationKey).routes).filter((trainId) => {
+          return stops.value.get(stationKey).routes[trainId].includes('south')
         })
       )
     })
+
+    console.log('stations: ', stations)
 
     const _processedRoutings = {}
     const _routingByDirection = {}
@@ -137,6 +136,7 @@ export const useMapStore = defineStore('goodservice', () => {
     const _transferStations = new Set()
 
     Object.keys(trains.value).forEach((key) => {
+      // console.log('for each trains.value: ', key)
       const northStops = new Set()
       const southStops = new Set()
       const route = trains.value[key]
@@ -167,7 +167,9 @@ export const useMapStore = defineStore('goodservice', () => {
       }
       ;[northRoutings, southRoutings].forEach((direction) => {
         direction.forEach((routing) => {
+          // console.log("$$$")
           _destinations.add(routing[routing.length - 1])
+          // console.log("%%%")
         })
       })
       const allRoutings = northRoutings.concat(
@@ -176,6 +178,8 @@ export const useMapStore = defineStore('goodservice', () => {
       _processedRoutings[key] = Array.from(new Set(allRoutings.map(JSON.stringify)), JSON.parse)
     })
 
+    // console.log('_processedRoutings: ', _processedRoutings)
+
     Object.keys(_processedRoutings).forEach((key) => {
       const routings = _processedRoutings[key]
       routings.forEach((route) => {
@@ -183,15 +187,15 @@ export const useMapStore = defineStore('goodservice', () => {
         let prevTrains = []
 
         route.forEach((stop) => {
-          const stopData = stops.value[stop]
+          const stopData = stops.value.get(stop)
           // console.log('stopData: ', stopData)
 
           if (!stopData) {
             return
           }
 
-          const trains = Object.keys(stops.value[stop].routes).flatMap((r) =>
-            stops.value[stop].routes[r].map((d) => `${r}-${d}`)
+          const trains = Object.keys(stops.value.get(stop).routes).flatMap((r) =>
+            stops.value.get(stop).routes[r].map((d) => `${r}-${d}`)
           )
 
           if (prevStop) {
@@ -221,36 +225,9 @@ export const useMapStore = defineStore('goodservice', () => {
   }
 
   async function updateData() {
-    const apiRes = await axios.get(apiUrl)
-    trains.value = apiRes.data.routes
-    blogPost.value = apiRes.data.blog_post
-    timestamp.value = apiRes.data.timestamp
-
-    const stopsRes = await axios.get(stopsUrl)
-    let _stops = []
-    stopsRes.data.stops.forEach((stop) => {
-      // if (stop.accessibility) {
-      //   stop.accessibility.directions.forEach((direction) => {
-      //     accessibleStations[direction].push(stop.id);
-      //   });
-      //   if (stop.accessibility.advisories.length > 0) {
-      //     outages[stop.id] = stop.accessibility.advisories;
-      //   }
-      // }
-      stop.transfers?.forEach((toStop) => {
-        if (stations.value[stop.id]) {
-          stations.value[stop.id]['transfers'].add(toStop)
-        }
-      })
-      _stops[stop.id] = stop
-      if (stop.bus_transfers) {
-        stations.value[stop.id]['busTransfers'] = stop.bus_transfers
-      }
-      if (stop.connections) {
-        stations.value[stop.id]['connections'] = stop.connections
-      }
-    })
-    stops.value = _stops
+    const res = await getUpdateData()
+    trains.value = res.routes
+    stops.value = res.stops
 
     processRoutings()
     calculateOffsets()
@@ -324,8 +301,11 @@ export const useMapStore = defineStore('goodservice', () => {
     if (refreshData) {
       await updateData()
     }
+      // console.log("!!!")
+      // console.log(trains.value)
     let features = []
     Object.keys(trains.value).forEach((key) => {
+      // console.log("???")
       if (!processedRoutings.value[key].length) {
         return
       }
@@ -333,6 +313,7 @@ export const useMapStore = defineStore('goodservice', () => {
       const coordinates = processedRoutings.value[key].map((r) => {
         return getRoutePath(r)
       })
+      // console.log(coordinates)
 
       const route = trains.value[key]
       const geojson = {

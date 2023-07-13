@@ -29,6 +29,7 @@ watch(enablePos, (newVal) => { setPositionVisible(map, newVal) })
 
 async function updateRoutes() {
   const geojson = await mapStore.getRoutesGeoJson()
+  console.log('updateRoutes: ', geojson)
   await updateRoute(map, geojson)
 }
 
@@ -56,14 +57,14 @@ async function allUpdate() {
   } catch (error) {
     msg.value = `updateTrainPositions Failed: ${error}`
   }
-  try {
-    await updateHeatMap(map)
-  } catch (error) {
-    msg.value = `updateHeatMap Failed: ${error}`
-  }
-  map.moveLayer(heatmapEntriesHeatId, positionId)
-  map.moveLayer(heatmapEntriesPointId, positionId)
-  map.moveLayer(heatmapEntriesLabelId, positionId)
+  // try {
+  //   await updateHeatMap(map)
+  // } catch (error) {
+  //   msg.value = `updateHeatMap Failed: ${error}`
+  // }
+  // map.moveLayer(heatmapEntriesHeatId, positionId)
+  // map.moveLayer(heatmapEntriesPointId, positionId)
+  // map.moveLayer(heatmapEntriesLabelId, positionId)
   map.moveLayer(positionId, null)
   loading.value = false
 }
@@ -159,6 +160,7 @@ function switchRealtime(res) {
 
 import SnackBar from '@/components/SnackBar.vue'
 const msg = ref('')
+
 </script>
 
 <template>
