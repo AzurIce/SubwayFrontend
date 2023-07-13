@@ -22,12 +22,16 @@ let routeIds = []
 watch(enableHeatMap, (newVal) => {
   if (!map.getLayer('StationEntry-heat')) return
   map.setLayoutProperty('StationEntry-heat', 'visibility', newVal ? 'visible' : 'none')
+  if (!map.getLayer('StationEntry-point')) return
+  map.setLayoutProperty('StationEntry-point', 'visibility', newVal ? 'visible' : 'none')
 })
 watch(enableRoute, (newVal) => {
-  for (let routeId in routeIds) {
-    if (!map.getLayer('routeId')) continue
+  // console.log(routeIds)
+  routeIds.forEach((routeId) => {
+    console.log(routeId)
+    if (!map.getLayer(routeId)) return
     map.setLayoutProperty(routeId, 'visibility', newVal ? 'visible' : 'none')
-  }
+  })
 })
 watch(enablePos, (newVal) => {
   if (!map.getLayer('TrainPositions')) return
@@ -190,7 +194,6 @@ async function updateHeatMap() {
   }
 
   if (!map.getLayer("StationEntry-heat")) {
-
     map.addLayer(
       {
         'id': 'StationEntry-heat',
@@ -316,6 +319,7 @@ async function updateHeatMap() {
       },
       'waterway-label'
     );
+    map.setLayoutProperty('StationEntry-point', 'visibility', enableHeatMap.value ? 'visible' : 'none')
   }
 
 }
