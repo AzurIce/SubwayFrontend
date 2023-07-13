@@ -11,7 +11,7 @@ import stationData from '@/data/station_details.json'
 //   return timeRange
 // }
 
-async function _getTrueData(time, id) {
+async function _getTrueData(time: string, id: string) {
   const res = await get(`/true/at?dateTime=${time}&GTFSid=${id}`)
   return res
 }
@@ -34,27 +34,25 @@ async function _getTrueData(time, id) {
 //   return Math.floor(Math.random() * 200)
 // }
 
-function parseTime(time) {
+function parseTime(time: Date) {
   // console.log(time)
   // console.log(time.getMonth())
   let month = time.getMonth() + 1
+  let monthStr = `${month}`
   if (month < 10) {
-    month = `0${month}`
-  } else {
-    month = `${month}`
+    monthStr = `0${month}`
   }
 
   let hour = time.getHours()
+  let hourStr = `${hour}`
   if (hour < 10) {
-    hour = `0${hour}`
-  } else {
-    hour = `${hour}`
+    hourStr = `0${hour}`
   }
 
-  return `${time.getFullYear()}-${month}-${time.getDate()} ${hour}:00:00`
+  return `${time.getFullYear()}-${monthStr}-${time.getDate()} ${hourStr}:00:00`
 }
 
-export async function getData(id) {
+export async function getData(id: string): Promise<any> {
   const date = new Date()
   date.setHours(Math.floor(date.getHours() / 4) * 4)
 
@@ -75,7 +73,7 @@ export async function getData(id) {
   return result
 }
 
-export async function getAllTrue() {
+export async function getAllTrue(): Promise<any> {
   const date = new Date()
   date.setHours(Math.floor(date.getHours() / 4) * 4)
 
@@ -89,8 +87,8 @@ export async function getHeatMapGeoJson() {
   const res = await getAllTrue()
   // console.log(res)
 
-  let features = res.data.data.map((v) => {
-    const stationInfo = stationData[v['GTFS_Stop_ID']]
+  let features = res.data.data.map((v: any) => {
+    const stationInfo = (stationData as any)[v['GTFS_Stop_ID']]
     return {
       geometry: { coordinates: [stationInfo['longitude'], stationInfo['latitude']], type: 'Point' },
       properties: { Entries: v['tEntries'], Exits: v['tExits'], id: v['GTFS_Stop_ID'] }
@@ -104,6 +102,6 @@ export async function getHeatMapGeoJson() {
 }
 
 
-export async function getOverload() {
+export async function getOverload(): Promise<any> {
   return await get('/overload')
 }
