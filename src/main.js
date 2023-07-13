@@ -11,12 +11,9 @@ import { createVuetify } from 'vuetify'
 
 import VueApexCharts from 'vue3-apexcharts'
 
-// import { aliases, mdi } from 'vuetify/iconsets/mdi'
-
 createApp(App)
   .use(createPinia())
   .use(router)
   .use(createVuetify())
   .use(VueApexCharts)
-  // .use(Particles)
   .mount('#app')
