@@ -3,10 +3,10 @@
 import { ref, reactive, onMounted, nextTick, computed ,defineEmits} from 'vue'
 
 const colors = [
-  { index: 0, color: '#faebd7' },
-  { index: 1, color: '#b98efb' },
-  { index: 3, color: '#6ce4d8' },
-  { index: 2, color: '#f6ff85' }
+  { index: 0, color: '#84C9EF' },
+  { index: 1, color: '#C7C9E0' },
+  { index: 3, color: '#ABCCDD' },
+  { index: 2, color: '#F4E0EA' }
 ]
 
 const rotate = ref(0)
@@ -70,26 +70,4 @@ const emit = defineEmits(['changeColor'])
   transform: rotate(-90deg);
 }
 
-.selector::before {
-  width: calc(100% - 12px);
-  height: calc(100% - 12px);
-  border: 4px solid #fff;
-  border-radius: 50%;
-  position: absolute;
-  top: 6px;
-  left: 6px;
-  background-color: transparent;
-  content: '';
-  box-sizing: border-box;
-  transform: scale(0);
-  transition: 0.5s ease;
-}
-
-.selector--active {
-  position: relative;
-}
-
-.selector--active::before {
-  transform: scale(1);
-}
 </style>
