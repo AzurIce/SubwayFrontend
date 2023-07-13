@@ -115,7 +115,7 @@ const msg = ref('')
           </div>
 
           <nav>
-            <RouterLink to="/">Home</RouterLink>
+            <!-- <RouterLink to="/">Home</RouterLink> -->
             <RouterLink to="/about">About</RouterLink>
           </nav>
         </div>
