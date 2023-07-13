@@ -18,27 +18,28 @@
             <v-expansion-panels>
               <v-expansion-panel title="注意事项" style="backgrund-color: aliceblue">
                 <v-expansion-panel-text>
-                  1.请输入你所要查询的日期，以4个小时为单位<br />示例值: 2017-02-04 04:00:00<br />
+                  1.请输入你所要查询的日期，以4个小时为单位<br /> 示例值: 2017-02-04 04:00:00<br /> 默认值取当前时间<br>
                   2.输入你所要查询的站点 <br />示例值 R01<br />
-                  3.输入你所要查询的事件段<br />
                 </v-expansion-panel-text>
               </v-expansion-panel>
             </v-expansion-panels>
             <br />
 
             <v-row>
-              <v-col cols="4">
-                <v-text-field v-model="data" label="data" style="width: 100%" hint="input the correct data"
-                  :rules="[() => (data != '') || '日期不可为空']"></v-text-field>
+              <v-col cols="6">
+                <v-text-field v-model="data" label="时间" style="width: 100%;font-size: 6px;"
+                  hint="input the correct data" :rules="[() => (data != '') || '*日期取默认值']"></v-text-field>
               </v-col>
-              <v-col cols="4">
+              <v-col cols="6">
+                <!-- <v-autocomplete v-model="station" chips label="站点" style="width:100%" hint="input the correct station"
+
+                  :items="['California', 'Colorado', 'Florida', 'Georgia', 'Texas', 'Wyoming']">
+                </v-autocomplete> -->
+
                 <v-text-field v-model="station" label="station" style="width: 100%" hint="input the correct station"
                   :rules="[() => (station != '') || '站点不能为空']"></v-text-field>
               </v-col>
-              <v-col cols="4">
-                <v-text-field v-model="period" label="period" style="width: 100%" hint="input the correct period"
-                  :rules="[() => (period != '') || '时间段不能为空']"></v-text-field>
-              </v-col>
+
             </v-row>
             <v-row>
               <v-col cols="12" class="text-center">
@@ -48,9 +49,8 @@
           </div>
         </v-parallax>
 
-        <!-- <apexchart id="lineContainer" class="bottom-right-bottom" type="line" :options="chartOptions" :series="series"> -->
-        <apexchart id="lineContainer" class="bottom-right-bottom" type="line">
-        </apexchart>
+        <apexchart id="lineContainer" class="bottom-right-bottom" type="line"></apexchart>
+
       </div>
     </div>
   </div>
@@ -63,7 +63,7 @@ import Star from '@/components/Star.vue'
 import Palltte from '../../components/Palltte.vue'
 import SnackBar from '../../components/SnackBar.vue'
 
-import { getData } from '../../lib/axios/count'
+import { getData, getCurData, getAppointData, getAllStations } from '../../lib/axios/count'
 
 import { color } from 'echarts'
 
@@ -82,27 +82,8 @@ export default {
       period: '',
       msg: '',
       chartData: {
-        // labels: ['2023.7.11.0', '2023.7.11.4', '2023.7.11.8', '2023.7.11.12', '2023.7.11.16'],
         labels: [],
         series: []
-        // series: [
-        //   {
-        //     name: 'InActual',
-        //     data: [3500, 4200, 2800, 5200, 4800]
-        //   },
-        //   {
-        //     name: 'InForecast',
-        //     data: [1500, 3200, 1800, 3200, 2800]
-        //   },
-        //   {
-        //     name: 'OutActual',
-        //     data: [4133, 2134, 3243, 1243, 6544]
-        //   },
-        //   {
-        //     name: 'OutForecast',
-        //     data: [424, 3253, 1322, 2324, 4355]
-        //   }
-        // ]
       },
       barOptions: {
         chart: {
@@ -164,9 +145,17 @@ export default {
     },
     submit() {
       console.log(this.data + "  " + this.station + "  " + this.period);
-      getData(this.station).then((res) => {
+      // if (this.data != '') {
+      let submitdata = this.data
+      if (this.data == '')
+        submitdata = getCurData()
+      getAppointData(submitdata, this.station).then((res) => {
         this.msg = '获取成功'
         this.barChart.updateOptions({
+          title: {
+            text: this.station + '-人流量图',
+            align: 'center',
+          },
           xAxis: {
             data: res.map((v) => v.dateTime.replace(':00:00', '时')),
             axisLabel: {
@@ -177,20 +166,20 @@ export default {
             {
               name: '出战人数',
               type: 'bar',
-              data:res.map((v)=>{
+              data: res.map((v) => {
                 return {
-                  x:v.dateTime.replace(':00:00','时'),
-                  y:v.tExits
+                  x: v.dateTime.replace(':00:00', '时'),
+                  y: v.tExits
                 }
               })
             },
             {
               name: '入站人数',
               type: 'bar',
-              data:res.map((v)=>{
+              data: res.map((v) => {
                 return {
-                  x:v.dateTime.replace(':00:00','时'),
-                  y:v.tEntries
+                  x: v.dateTime.replace(':00:00', '时'),
+                  y: v.tEntries
                 }
               })
             }
@@ -198,6 +187,10 @@ export default {
         })
 
         this.linechart.updateOptions({
+          title: {
+            text: this.station + '-人流量图',
+            align: 'center',
+          },
           xAxis: {
             data: res.map((v) => v.dateTime.replace(':00:00', '时')),
             axisLabel: {
@@ -208,20 +201,20 @@ export default {
             {
               name: '出战人数',
               type: 'line',
-              data:res.map((v)=>{
+              data: res.map((v) => {
                 return {
-                  x:v.dateTime.replace(':00:00','时'),
-                  y:v.tExits
+                  x: v.dateTime.replace(':00:00', '时'),
+                  y: v.tExits
                 }
               })
             },
             {
               name: '入站人数',
               type: 'line',
-              data:res.map((v)=>{
+              data: res.map((v) => {
                 return {
-                  x:v.dateTime.replace(':00:00','时'),
-                  y:v.tEntries
+                  x: v.dateTime.replace(':00:00', '时'),
+                  y: v.tEntries
                 }
               })
             }
@@ -232,8 +225,8 @@ export default {
         this.msg = `获取失败:${err}`
         console.log(err)
       }).finally(() => {
-
       })
+      // } 
     }
   },
   mounted() {
@@ -241,6 +234,9 @@ export default {
       time: ''
     }
     this.initChart()
+    this.data = getCurData()
+    // console.log(getAllStations())
+
   }
 }
 </script> 
@@ -289,6 +285,9 @@ export default {
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
   border-radius: 5px;
   padding: 5px;
+  /* background: linear-gradient(to right, rgba(0, 0 0, 0.3), rgba(255, 255, 255, 0.3));
+   */
+  background: linear-gradient(to left, rgba(255, 255, 255, 0.2), rgba(0, 0, 0, 0.1));
 }
 
 .bottom-section-right {
@@ -302,5 +301,8 @@ export default {
 .bottom-right-bottom {
   flex: 2;
   border: 1px solid black;
+  border-radius: 5px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.4);
+  background: linear-gradient(to right, rgba(255, 255, 255, 0.2), rgba(0, 0, 0, 0.1));
 }
 </style>
