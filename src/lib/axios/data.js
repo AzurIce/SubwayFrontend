@@ -2,14 +2,14 @@ import { get } from './axios'
 
 import stationData from '@/data/station_details.json'
 
-async function getTimeRange() {
-  const res = await get('/time')
-  const timeRange = {
-    start: Date.parse(res.data.beginTime),
-    end: Date.parse(res.data.endTime)
-  }
-  return timeRange
-}
+// async function getTimeRange() {
+//   const res = await get('/time')
+//   const timeRange = {
+//     start: Date.parse(res.data.beginTime),
+//     end: Date.parse(res.data.endTime)
+//   }
+//   return timeRange
+// }
 
 async function _getTrueData(time, id) {
   const res = await get(`/true/at?dateTime=${time}&GTFSid=${id}`)
@@ -30,9 +30,10 @@ async function _getTrueData(time, id) {
 //     console.log(result)
 // }
 
-function rand() {
-  return Math.floor(Math.random() * 200)
-}
+// function rand() {
+//   return Math.floor(Math.random() * 200)
+// }
+
 function parseTime(time) {
   // console.log(time)
   // console.log(time.getMonth())
@@ -100,4 +101,9 @@ export async function getHeatMapGeoJson() {
     type: 'FeatureCollection',
     features: features
   }
+}
+
+
+export async function getOverload() {
+  return await get('/overload')
 }

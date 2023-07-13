@@ -27,5 +27,9 @@ export const useTokenStore = defineStore('token', () => {
         return permissionLevel.value == 3
     }
 
-    return { token, isLoggedIn, setToken, unSetToken, setPermission, permissionLevel, isAdmin, unSetPermission }
+    function isGov(){
+        return permissionLevel.value == 2
+    }
+
+    return { token, isLoggedIn, setToken, unSetToken, setPermission, permissionLevel, isGov,isAdmin, unSetPermission }
 })

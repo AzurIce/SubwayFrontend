@@ -39,6 +39,7 @@ function onLogout() {
     </v-app-bar-nav-icon>
     <!-- fire-circle -->
     <v-toolbar-title>地铁客流量预测系统</v-toolbar-title>
+    <v-btn icon="mdi-bell-alert" @click="()=>{router.push('/warning')}" v-if="tokenStore.isGov()"></v-btn>
     <v-btn icon="mdi-map-search" @click="()=>{router.push('/')}"></v-btn>
     <v-btn icon="mdi-currency-usd" @click="() => { donateDialog = true }" />
     <v-btn class="tw-text-purple" icon="mdi-wrench" v-if="tokenStore.isAdmin()" @click="() => { router.push('/admin') }"></v-btn>
