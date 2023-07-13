@@ -63,7 +63,7 @@ import Star from '@/components/Star.vue'
 import Palltte from '../../components/Palltte.vue'
 import SnackBar from '../../components/SnackBar.vue'
 
-import { getData } from '../../lib/axios/data'
+import { getData } from '../../lib/axios/count'
 
 import { color } from 'echarts'
 
@@ -177,12 +177,22 @@ export default {
             {
               name: '出战人数',
               type: 'bar',
-              data: res.map((v) => v.tExits)
+              data:res.map((v)=>{
+                return {
+                  x:v.dateTime.replace(':00:00','时'),
+                  y:v.tExits
+                }
+              })
             },
             {
               name: '入站人数',
               type: 'bar',
-              data: res.map((v) => v.tEntries)
+              data:res.map((v)=>{
+                return {
+                  x:v.dateTime.replace(':00:00','时'),
+                  y:v.tEntries
+                }
+              })
             }
           ]
         })
@@ -198,12 +208,22 @@ export default {
             {
               name: '出战人数',
               type: 'line',
-              data: res.map((v) => v.tExits)
+              data:res.map((v)=>{
+                return {
+                  x:v.dateTime.replace(':00:00','时'),
+                  y:v.tExits
+                }
+              })
             },
             {
               name: '入站人数',
               type: 'line',
-              data: res.map((v) => v.tEntries)
+              data:res.map((v)=>{
+                return {
+                  x:v.dateTime.replace(':00:00','时'),
+                  y:v.tEntries
+                }
+              })
             }
           ]
         })
