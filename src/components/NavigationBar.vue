@@ -22,9 +22,9 @@ function onLogout() {
 </script>
 
 <template>
-  <v-dialog v-model="donateDialog" width="auto">
+  <v-dialog v-model="donateDialog" width="300">
     <v-card>
-      <v-img src="src/assets/showMeMoney.jpg" contain height="300"></v-img>
+      <v-img src="src/assets/showMeMoney.jpg" contain height="auto"></v-img>
       <v-card-text>
         我很可爱请给我钱
       </v-card-text>
