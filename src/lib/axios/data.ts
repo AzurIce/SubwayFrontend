@@ -105,5 +105,14 @@ export async function getHeatMapGeoJson() {
 
 
 export async function getOverload() {
-  return await get('/overload')
+  const now = new Date();
+
+  const year = now.getFullYear();
+  const month = ('0' + (now.getMonth() + 1)).slice(-2);
+  const day = ('0' + now.getDate()).slice(-2);
+  let hours = parseInt(('0' + now.getHours()).slice(-2));
+  hours = hours - (hours % 4);
+
+  const formattedTime = year + '-' + month + '-' + day + ' ' + hours + ':00:00';
+  return await get('/warning?dateTime=' + formattedTime);
 }
