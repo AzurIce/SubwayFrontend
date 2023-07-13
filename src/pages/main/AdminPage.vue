@@ -103,7 +103,6 @@ const msg = ref('')
     </tbody>
   </v-table>
   </div>
-  
   <div class="admin">Welcome,Super Admin!</div>
 </template>
 <style scoped>

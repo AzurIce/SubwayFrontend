@@ -26,23 +26,20 @@ const msg = ref('')
     <v-table style="background-color: transparent">
     <thead>
       <tr>
-        <th class="text-left">Id</th>
-        <th class="text-left">Name</th>
+        <th class="text-left">GTFS_Stop_ID</th>
         <th class="text-left">Entries</th>
         <th class="text-left">Exits</th>
       </tr>
     </thead>
     <tbody>
-      <tr v-for="station in stations" :key="station.id">
-        <td>{{ station.id }}</td>
-        <td>{{ station.name }}</td>
+      <tr v-for="station in stations" :key="station.GTFS_Stop_ID">
+        <td>{{ station.GTFS_Stop_ID }}</td>
         <td>{{ station.Entries }}</td>
         <td>{{ station.Exits }}</td>
       </tr>
     </tbody>
   </v-table>
   </div>
-  
   <div class="admin">Welcome,Super Admin!</div>
 </template>
 <style scoped>

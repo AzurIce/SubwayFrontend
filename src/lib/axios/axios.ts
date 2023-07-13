@@ -15,7 +15,7 @@ export function get(url: string): Promise<any> {
         }
       })
       .then((res) => {
-        if (res.data.code != '200 OK') {
+        if (res.data.code != 200) {
           reject(res.data.msg)
         } else {
           resolve(res)
@@ -42,7 +42,7 @@ export function post(url: string, data: any, withToken: boolean): Promise<any> {
     axios
       .post(`${host}${url}`, data, options)
       .then((res) => {
-        if (res.data.code != '200 OK') {
+        if (res.data.code != 200) {
           reject(res.data.msg)
         } else {
           resolve(res)
