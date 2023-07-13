@@ -2,12 +2,12 @@ import { createRouter, createWebHistory } from 'vue-router'
 import LoginPage from '@/pages/LoginPage.vue'
 import AboutPage from '@/pages/AboutPage.vue'
 import TestPage from '@/pages/TestPage.vue'
-
 import MainPage from '@/pages/MainPage.vue'
+
 import HomePage from '@/pages/main/HomePage.vue'
 import CountPage from '@/pages/main/CountPage.vue'
 import AdminPage from '@/pages/main/AdminPage.vue'
-
+import WarningPage from '@/pages/main/WarningPage.vue'
 import { useTokenStore } from '@/stores/token'
 
 const router = createRouter({
@@ -40,6 +40,14 @@ const router = createRouter({
           path: '/count',
           name: 'count',
           component: CountPage,
+          meta: {
+            requireAuth: true
+          },
+        },
+        {
+          path: '/warning',
+          name: 'warning',
+          component: WarningPage,
           meta: {
             requireAuth: true
           },

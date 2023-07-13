@@ -115,7 +115,8 @@ const msg = ref('')
           </div>
 
           <nav>
-            <RouterLink to="/">Home</RouterLink>
+            <!-- 删除了首页跳转功能 -->
+            <!-- <RouterLink to="/">Home</RouterLink> -->
             <RouterLink to="/about">About</RouterLink>
           </nav>
         </div>

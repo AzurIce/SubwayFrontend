@@ -2,14 +2,14 @@ import { get } from './axios'
 
 import stationData from '@/data/station_details.json'
 
-async function getTimeRange() {
-  const res = await get('/time')
-  const timeRange = {
-    start: Date.parse(res.data.beginTime),
-    end: Date.parse(res.data.endTime)
-  }
-  return timeRange
-}
+// async function getTimeRange() {
+//   const res = await get('/time')
+//   const timeRange = {
+//     start: Date.parse(res.data.beginTime),
+//     end: Date.parse(res.data.endTime)
+//   }
+//   return timeRange
+// }
 
 async function _getTrueData(time, id) {
   const res = await get(`/true/at?dateTime=${time}&GTFSid=${id}`)
@@ -30,9 +30,10 @@ async function _getTrueData(time, id) {
 //     console.log(result)
 // }
 
-function rand() {
-  return Math.floor(Math.random() * 200)
-}
+// function rand() {
+//   return Math.floor(Math.random() * 200)
+// }
+
 function parseTime(time) {
   // console.log(time)
   // console.log(time.getMonth())
@@ -55,55 +56,38 @@ function parseTime(time) {
 
 export async function getData(id) {
   const date = new Date()
-  // console.log(date)
-  //   date.setFullYear(date.getFullYear() - 3)
   date.setHours(Math.floor(date.getHours() / 4) * 4)
-  // console.log(date)
 
   let result = []
   for (let i = -6; i <= 0; i++) {
     let time = new Date(date)
     time.setHours(time.getHours() + i * 4)
-    // console.log(time)
     const res = await _getTrueData(parseTime(time), id)
-    // console.log(parseTime(time), id)
-    // console.log(res)
     result.push(res.data.data[0])
-    // result.push({
-    //     dateTime: parseTime(time),
-    //     tExits: rand(),
-    //     GTFS_Stop_ID: id,
-    //     tEntries: rand()
-    // })
   }
 
   for (let i = 1; i <= 3; i++) {
     let time = new Date(date)
     time.setHours(time.getHours() + i * 4)
-    // console.log(time)
     const res = await _getTrueData(parseTime(time), id)
-    // console.log(parseTime(time), id)
-    // console.log(res)
     result.push(res.data.data[0])
-    // result.push({
-    //     dateTime: parseTime(time),
-    //     tExits: rand(),
-    //     GTFS_Stop_ID: id,
-    //     tEntries: rand()
-    // })
   }
   return result
 }
 
 export async function getAllTrue() {
   const date = new Date()
+  date.setHours(Math.floor(date.getHours() / 4) * 4)
+
   const datetimeStr = parseTime(date)
+  console.log(`lib/axios/data.js: getAllTrue ${datetimeStr}`)
   return await get(`/true/all?dateTime=${datetimeStr}`)
 }
 
 export async function getHeatMapGeoJson() {
   console.log('lib/axios/data.js: getHeatMapGeoJson')
   const res = await getAllTrue()
+  // console.log(res)
 
   let features = res.data.data.map((v) => {
     const stationInfo = stationData[v['GTFS_Stop_ID']]
@@ -112,8 +96,14 @@ export async function getHeatMapGeoJson() {
       properties: { Entries: v['tEntries'], Exits: v['tExits'], id: v['GTFS_Stop_ID'] }
     }
   })
+  // console.log(features)
   return {
     type: 'FeatureCollection',
     features: features
   }
+}
+
+
+export async function getOverload() {
+  return await get('/overload')
 }
