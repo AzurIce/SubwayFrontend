@@ -3,7 +3,7 @@
 import mapboxgl from 'mapbox-gl' // or "const mapboxgl = require('mapbox-gl');"
 import 'mapbox-gl/dist/mapbox-gl.css'
 
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 
 import { useMapStore } from '../stores/goodservice'
 const mapStore = useMapStore()
@@ -14,14 +14,36 @@ let map = null
 
 import { getHeatMapGeoJson } from '@/lib/axios/data'
 
+const enableHeatMap = ref(false)
+const enableRoute = ref(true)
+const enablePos = ref(true)
+let routeIds = []
+
+watch(enableHeatMap, (newVal) => {
+  if (!map.getLayer('StationEntry-heat')) return
+  map.setLayoutProperty('StationEntry-heat', 'visibility', newVal ? 'visible' : 'none')
+})
+watch(enableRoute, (newVal) => {
+  for (let routeId in routeIds) {
+    if (!map.getLayer('routeId')) continue
+    map.setLayoutProperty(routeId, 'visibility', newVal ? 'visible' : 'none')
+  }
+})
+watch(enablePos, (newVal) => {
+  if (!map.getLayer('TrainPositions')) return
+  map.setLayoutProperty('TrainPositions', 'visibility', newVal ? 'visible' : 'none')
+})
+
 async function updateRoutes() {
   const routesGeoJson = await mapStore.getRoutesGeoJson()
   // console.log(routesGeoJson)
 
+  let _route_ids = []
   for (let route_key in routesGeoJson) {
     const geojson = routesGeoJson[route_key]
 
     const layerId = `route-${route_key}`;
+    _route_ids.push(layerId)
     if (map.getSource(layerId)) {
       map.getSource(layerId).setData(geojson);
     } else {
@@ -65,6 +87,7 @@ async function updateRoutes() {
       map.addLayer(layer);
     }
   }
+  routeIds = _route_ids
 }
 
 async function updateTrainPositions() {
@@ -133,12 +156,23 @@ async function allUpdate() {
   loading.value = true
   try {
     await mapStore.updateData()
+  } catch (error) {
+    msg.value = `updateData Failed: ${error}`
+  }
+  try {
     await updateRoutes()
+  } catch (error) {
+    msg.value = `updateRoutes Failed: ${error}`
+  }
+  try {
     await updateTrainPositions()
+  } catch (error) {
+    msg.value = `updateTrainPositions Failed: ${error}`
+  }
+  try {
     await updateHeatMap()
   } catch (error) {
-    // console.log(error)
-    msg.value = 'error'
+    msg.value = `updateHeatMap Failed: ${error}`
   }
   loading.value = false
 }
@@ -226,6 +260,7 @@ async function updateHeatMap() {
       },
       'waterway-label'
     );
+    map.setLayoutProperty('StationEntry-heat', 'visibility', enableHeatMap.value ? 'visible' : 'none')
   }
 
   if (!map.getLayer("StationEntry-point")) {
@@ -292,6 +327,12 @@ async function updateData() {
   loading.value = false
 }
 
+const geoControl = new mapboxgl.GeolocateControl({
+  positionOptions: {
+    enableHighAccuracy: true
+  },
+  trackUserLocation: true
+});
 
 const selectedId = ref('')
 const overlay = ref(true)
@@ -305,6 +346,9 @@ function initMap() {
     ],
     zoom: 9 // starting zoom
   })
+
+  map.addControl(new mapboxgl.NavigationControl({ showCompass: false }), "bottom-right");
+  map.addControl(geoControl, 'bottom-right');
 
 
   map.on('load', async () => {
@@ -382,8 +426,13 @@ const msg = ref('')
 
       <div class="tw-flex tw-items-center">
         <v-btn icon="mdi-refresh" @click="allUpdate" :loading="loading" inline />
-        <v-switch label="实时更新" v-model="autoUpdate" @update:modelValue="switchRealtime" class="tw-inline-block tw-ml-4" hide-details></v-switch>
-        <v-switch label="热力图" class="tw-inline-block tw-ml-4" hide-details></v-switch>
+        <v-switch label="实时更新" v-model="autoUpdate" @update:modelValue="switchRealtime" class="tw-inline-block tw-ml-4"
+          hide-details></v-switch>
+      </div>
+      <div class="tw-flex tw-items-center">
+        <v-switch label="列车实时位置" v-model="enablePos" class="tw-inline-block tw-ml-4" hide-details></v-switch>
+        <v-switch label="线路" v-model="enableRoute" class="tw-inline-block tw-ml-4" hide-details></v-switch>
+        <v-switch label="热力图" class="tw-inline-block tw-ml-4" hide-details v-model="enableHeatMap"></v-switch>
       </div>
 
       <hr class="tw-mt-4 tw-mb-4" v-if="selectedId" />
