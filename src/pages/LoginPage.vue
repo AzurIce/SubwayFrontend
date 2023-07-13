@@ -93,9 +93,9 @@ const msg = ref('')
 <template>
   <BgParticle />
   <ClickEffect /> <!--click on special effect-->
+  <SnackBar v-model="msg"/>
 
-  <div>
-    <SnackBar v-model="msg"/>
+  <div class="tw-w-full">
 
     <div class="lg:tw-grid lg:tw-grid-cols-2 lg:tw-p-8">
       <header>

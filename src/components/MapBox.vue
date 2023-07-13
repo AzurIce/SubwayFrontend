@@ -19,142 +19,24 @@ const enableRoute = ref(true)
 const enablePos = ref(true)
 let routeIds = []
 
-watch(enableHeatMap, (newVal) => {
-  if (!map.getLayer('StationEntry-heat')) return
-  map.setLayoutProperty('StationEntry-heat', 'visibility', newVal ? 'visible' : 'none')
-  if (!map.getLayer('StationEntry-point')) return
-  map.setLayoutProperty('StationEntry-point', 'visibility', newVal ? 'visible' : 'none')
-  if (!map.getLayer('heatmap-labels')) return
-  map.setLayoutProperty('heatmap-labels', 'visibility', newVal ? 'visible' : 'none')
-})
-watch(enableRoute, (newVal) => {
-  // console.log(routeIds)
-  routeIds.forEach((routeId) => {
-    console.log(routeId)
-    if (!map.getLayer(routeId)) return
-    map.setLayoutProperty(routeId, 'visibility', newVal ? 'visible' : 'none')
-  })
-})
-watch(enablePos, (newVal) => {
-  if (!map.getLayer('TrainPositions')) return
-  map.setLayoutProperty('TrainPositions', 'visibility', newVal ? 'visible' : 'none')
-})
+import { heatmapEntriesHeatId, heatmapEntriesPointId, heatmapEntriesLabelId, updateHeatMap, setHeatmapVisible } from '@/lib/mapbox/heatmap'
+import { positionId, updatePosition, setPositionVisible } from '@/lib/mapbox/position'
+import { routeId, updateRoute, setRouteVisible } from '@/lib/mapbox/route'
+
+watch(enableHeatMap, (newVal) => { setHeatmapVisible(map, newVal) })
+watch(enableRoute, (newVal) => { setRouteVisible(map, newVal) })
+watch(enablePos, (newVal) => { setPositionVisible(map, newVal) })
 
 async function updateRoutes() {
-  const routesGeoJson = await mapStore.getRoutesGeoJson()
-  // console.log(routesGeoJson)
-
-  let _route_ids = []
-  for (let route_key in routesGeoJson) {
-    const geojson = routesGeoJson[route_key]
-
-    const layerId = `route-${route_key}`;
-    _route_ids.push(layerId)
-    if (map.getSource(layerId)) {
-      map.getSource(layerId).setData(geojson);
-    } else {
-      map.addSource(layerId, {
-        "type": "geojson",
-        "data": geojson
-      });
-    }
-
-    if (!map.getLayer(layerId)) {
-      const layer = {
-        "id": layerId,
-        "type": "line",
-        "source": layerId,
-        "layout": {
-          "line-join": "miter",
-          "line-cap": "round",
-        },
-        "paint": {
-          "line-width": [
-            "interpolate",
-            ["linear"],
-            ["zoom"],
-            8, 1,
-            13, 2,
-            14, 5,
-          ],
-          "line-color": ["get", "color"],
-          "line-offset": [
-            "interpolate",
-            ["linear"],
-            ["zoom"],
-            8, ["get", "offset"],
-            13, ["*", ["get", "offset"], 1.5],
-            14, ["*", ["get", "offset"], 3],
-          ],
-          "line-opacity": ["get", "opacity"],
-        }
-      };
-
-      map.addLayer(layer);
-    }
-  }
-  routeIds = _route_ids
+  const geojson = await mapStore.getRoutesGeoJson()
+  console.log('updateRoutes: ', geojson)
+  await updateRoute(map, geojson)
 }
 
 async function updateTrainPositions() {
   const trainPositionsGeoJson = await mapStore.getTrainPositionsGeoJson()
-  // console.log(trainPositionsGeoJson)
-  if (map.getSource("TrainPositions")) {
-    map.getSource("TrainPositions").setData(trainPositionsGeoJson);
-  } else {
-    map.addSource("TrainPositions", {
-      "type": "geojson",
-      "data": trainPositionsGeoJson
-    });
-  }
-
-  if (!map.getLayer("TrainPositions")) {
-    // let blink = false;
-    map.addLayer({
-      "id": "TrainPositions",
-      "type": "symbol",
-      "source": "TrainPositions",
-      "layout": {
-        // "icon-image": ['get', 'icon'],
-        "icon-image": ['get', 'icon'],
-        "icon-allow-overlap": true,
-        "icon-ignore-placement": true,
-        "icon-size": {
-          "stops": [[10, 0.5], [11, 1], [12, 1.5], [13, 2]]
-        },
-        "icon-rotate": ['get', 'bearing'],
-        "icon-rotation-alignment": "map",
-        "text-field": ['get', 'route'],
-        "text-font": ['Lato Bold', "Open Sans Bold", "Arial Unicode MS Bold"],
-        "text-size": {
-          "stops": [[10, 6], [11, 8], [12, 10], [13, 12]]
-        },
-        "text-ignore-placement": true,
-        "text-allow-overlap": true,
-        // "text-offset": ['get', 'offset'],
-        "text-rotate": ['get', 'text-rotate']
-      },
-      "paint": {
-        "text-color": ['get', 'text-color'],
-        "icon-color": ['get', 'icon-color'],
-        "text-color-transition": {
-          "duration": 500,
-        },
-        "text-halo-color": "#666666",
-        "text-halo-width": ['get', 'halo-width'],
-      },
-      // "filter": ['get', 'visibility']
-    });
-
-
-    // setInterval(() => {
-    //   map.setPaintProperty('TrainPositions', "text-color", blink ? ['get', 'alternate-text-color'] : ['get', 'text-color']);
-    //   blink = !blink;
-    // }, 1000);
-  }
-  map.moveLayer('TrainPositions', null)
+  await updatePosition(map, trainPositionsGeoJson)
 }
-
 
 const loading = ref(false)
 async function allUpdate() {
@@ -175,186 +57,16 @@ async function allUpdate() {
   } catch (error) {
     msg.value = `updateTrainPositions Failed: ${error}`
   }
-  try {
-    await updateHeatMap()
-  } catch (error) {
-    msg.value = `updateHeatMap Failed: ${error}`
-  }
+  // try {
+  //   await updateHeatMap(map)
+  // } catch (error) {
+  //   msg.value = `updateHeatMap Failed: ${error}`
+  // }
+  // map.moveLayer(heatmapEntriesHeatId, positionId)
+  // map.moveLayer(heatmapEntriesPointId, positionId)
+  // map.moveLayer(heatmapEntriesLabelId, positionId)
+  map.moveLayer(positionId, null)
   loading.value = false
-}
-
-async function updateHeatMap() {
-  const res = await getHeatMapGeoJson()
-  console.log(res)
-  if (map.getSource("stationMes")) {
-    map.getSource("stationMes").setData(res);
-  } else {
-    map.addSource("stationMes", {
-      "type": "geojson",
-      "data": res
-    });
-  }
-
-  if (!map.getLayer("StationEntry-heat")) {
-    map.addLayer(
-      {
-        'id': 'StationEntry-heat',
-        'type': 'heatmap',
-        'source': 'stationMes',    //读取资源
-        'maxzoom': 11,               //设置最大缩放级别,超过这个点位后用圆圈来标识
-        'paint': {
-          // Increase the heatmap weight based on frequency and property magnitude
-          'heatmap-weight': [
-            'interpolate',
-            ['linear'],
-            ['get', 'Entries'],
-            0,
-            0,
-            2000,
-            1
-          ],
-          // Increase the heatmap color weight weight by zoom level
-          'heatmap-intensity': [ //给强度设置热力图
-            'interpolate',
-            ['linear'],
-            ['zoom'],
-            0,
-            1,
-            13,
-            3
-          ],
-          // to create a blur-like effect.
-          'heatmap-color': [
-            'interpolate',
-            ['linear'],
-            ['heatmap-density'], //热力图密度函数
-            0,
-            'rgba(33,102,172,0)',
-            0.2,
-            'rgb(103,169,207)',
-            0.4,
-            'rgb(209,229,240)',
-            0.6,
-            'rgb(253,219,199)',
-            0.8,
-            'rgb(239,138,98)',
-            1,
-            'rgb(178,24,43)'
-          ],
-          // Adjust the heatmap radius by zoom level
-          'heatmap-radius': [
-            'interpolate',
-            ['linear'],
-            ['zoom'],
-            0,
-            2,
-            13,
-            30
-          ],
-          // Transition from heatmap to circle layer by zoom level
-          'heatmap-opacity': [ //到9的时候热力图透明度为0
-            'interpolate',
-            ['linear'],
-            ['zoom'],
-            10,
-            1,
-            13,
-            0
-          ]
-        }
-      },
-      'waterway-label'
-    );
-    map.setLayoutProperty('StationEntry-heat', 'visibility', enableHeatMap.value ? 'visible' : 'none')
-  }
-
-  if (!map.getLayer("StationEntry-point")) {
-    map.addLayer(
-      {
-        'id': 'StationEntry-point',
-        'type': 'circle',
-        'source': 'stationMes',
-        'minzoom': 11,
-        'paint': {
-
-          'circle-radius': [ //动态调整了半径大小
-            'interpolate',
-            ['linear'],
-            ['zoom'],
-            11,
-            ['interpolate', ['linear'], ['to-number', ['get', 'Entries']], 1, 3, 2000, 10],
-            18,
-            ['interpolate', ['linear'], ['to-number', ['get', 'Entries']], 1, 20, 2000, 50]
-          ],
-
-          'circle-color': [
-            'interpolate',
-            ['linear'],
-            ['to-number', ['get', 'Entries']],
-            40,
-            'rgba(33,102,172,0.2)',
-            300,
-            'rgb(103,169,207)',
-            600,
-            'rgb(209,229,240)',
-            1000,
-            'rgb(253,219,199)',
-            1500,
-            'rgb(239,138,98)',
-            2000,
-            'rgb(178,24,43)'
-          ],
-
-          'circle-stroke-color': 'white', //描边颜色
-          'circle-stroke-width': 1,       //描边宽度
-          // Transition from heatmap to circle layer by zoom level 设置透明度
-          'circle-opacity': [
-            'interpolate',
-            ['linear'],
-            ['zoom'],
-            11,
-            0,
-            11.5,
-            1
-          ]
-        }
-      },
-      'waterway-label'
-    );
-    map.setLayoutProperty('StationEntry-point', 'visibility', enableHeatMap.value ? 'visible' : 'none')
-  }
-
-  if (!map.getLayer('heatmap-labels')) {
-    map.addLayer(
-        {
-            'id':'heatmap-labels',
-            'type':'symbol',
-            'source':'stationMes',
-            'minZoom':11,
-            'layout':{
-                'text-field':['get','Entries'],
-                'text-variable-anchor':['top'],
-                'text-radial-offset':1,
-                'text-justify':'auto',
-                'text-size':12
-            },
-            'paint':{
-                'text-color':'rgb(165,207,213)',
-                'text-opacity':[
-                    'interpolate',
-                    ['linear'],
-                    ['zoom'],
-                    10,
-                    0,
-                    10.5,
-                    1
-                ]
-            }
-        }
-    )
-    map.setLayoutProperty('heatmap-labels', 'visibility', enableHeatMap.value ? 'visible' : 'none')
-  }
-
 }
 
 async function updateData() {
@@ -424,6 +136,7 @@ function initMap() {
       map.getCanvas().style.cursor = '';
     });
     await allUpdate()
+    setHeatmapVisible(map, enableHeatMap.value)
     overlay.value = false
   })
 }
@@ -447,6 +160,7 @@ function switchRealtime(res) {
 
 import SnackBar from '@/components/SnackBar.vue'
 const msg = ref('')
+
 </script>
 
 <template>
@@ -467,7 +181,7 @@ const msg = ref('')
           hide-details></v-switch>
       </div>
       <div class="tw-flex tw-items-center">
-        <v-switch label="列车实时位置" v-model="enablePos" class="tw-inline-block tw-ml-4" hide-details></v-switch>
+        <v-switch label="列车位置" v-model="enablePos" class="tw-inline-block tw-ml-4" hide-details></v-switch>
         <v-switch label="线路" v-model="enableRoute" class="tw-inline-block tw-ml-4" hide-details></v-switch>
         <v-switch label="热力图" class="tw-inline-block tw-ml-4" hide-details v-model="enableHeatMap"></v-switch>
       </div>

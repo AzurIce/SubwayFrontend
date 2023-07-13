@@ -1,6 +1,6 @@
 
 <script setup>
-import { ref, reactive, onMounted, nextTick, computed ,defineEmits} from 'vue'
+import { ref, reactive, onMounted, nextTick, computed } from 'vue'
 
 const colors = [
   { index: 0, color: '#84C9EF' },
