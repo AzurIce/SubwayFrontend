@@ -8,28 +8,66 @@ type Routings = {
     north: Segment[],
     south: Segment[]
 }
-type Route = { id: string, name: string, color: string, actual_routings: Routings, trips: {
-    north: any[],
-    south: any[]
-} }
+type Route = {
+    id: string, name: string, color: string, actual_routings: Routings, trips: {
+        north: any[],
+        south: any[]
+    }
+}
 type Stop = { id: string, name: string, latitude: number, longitude: number, routes: Map<string, string[]> }
 
-export async function getUpdateData(): Promise<{ routes: Map<string, Route>, stops: Map<string, Stop> }> {
+export async function getUpdateData(): Promise<{ routes: Map<string, Route>, stops: Map<string, Stop>, stations: Map<string, Station> }> {
     const apiRes = await axios.get<{ routes: any }>(apiUrl)
     const stopsRes = await axios.get<{ stops: Stop[] }>(stopsUrl)
-    let routes = new Map<string, Route>(Object.entries(apiRes.data.routes))
+    let _routes = new Map<string, Route>(Object.entries(apiRes.data.routes))
     // console.log('routes: ', routes)
-    
-    let stops = new Map<string, Stop>
+
+    let _stops = new Map<string, Stop>
     stopsRes.data.stops.forEach(stop => {
         // console.log(stop)
-        stops.set(stop.id, stop)
-        stops.get(stop.id)!.routes = new Map<string, string[]>(Object.entries(stop.routes))
+        _stops.set(stop.id, stop)
+        _stops.get(stop.id)!.routes = new Map<string, string[]>(Object.entries(stop.routes))
     });
     // console.log('stops: ', stops)
+
+
+    const stationsData = new Map<string, any>(Object.entries(stationData as any))
+
+    let _stations = new Map<string, any>()
+
+    stationsData.forEach((__station, key) => {
+        // console.log('for each station, key: ', station, key)
+        const routeKeys = Array.from(_stops.get(key)!.routes.keys())
+        // console.log(routeKeys)
+
+        // console.log(stops.get(key))
+        const stops = new Set(_stops.get(key)!.routes.keys())
+        const northStops = new Set(
+            routeKeys.filter((trainId) => {
+                return _stops.get(key)!.routes.get(trainId)!.includes('north')
+            })
+        )
+        const southStops = new Set(
+            routeKeys.filter((trainId) => {
+                return _stops.get(key)!.routes.get(trainId)!.includes('south')
+            })
+        )
+        const south = new Map<string, Coord[]>(Object.entries(__station.south))
+        const north = new Map<string, Coord[]>(Object.entries(__station.north))
+        _stations.set(key, {
+            id: __station.id,
+            name: __station.name,
+            latitude: __station.latitude,
+            longitude: __station.longitude,
+            stops, northStops, southStops, south, north
+        })
+    })
+
+
     return {
-        routes,
-        stops
+        routes: _routes,
+        stops: _stops,
+        stations: _stations
     }
 }
 

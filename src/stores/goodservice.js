@@ -108,8 +108,10 @@ export const useMapStore = defineStore('goodservice', () => {
   }
 
   function processRoutings() {
-    stations = getParsedStations(stops)
+    // stations = getParsedStations(stops)
+    // console.log(stops)
     // console.log(stations)
+
 
     const _processedRoutings = {}
     const _routingByDirection = {}
@@ -215,6 +217,7 @@ export const useMapStore = defineStore('goodservice', () => {
     const res = await getUpdateData()
     trains = res.routes
     stops = res.stops
+    stations = res.stations
     // console.log('getUpdateData: ', res)
 
     processRoutings()
