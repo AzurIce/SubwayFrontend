@@ -5,8 +5,8 @@
     <div class="top-section">
       <Palltte class="top-box top-box-first" @changeColor="changeColor"></Palltte>
 
-      <div class="top-box top-box-null">区域2</div>
-      <div class="top-box top-box-null">区域3</div>
+      <div class="top-box top-box-null"></div>
+      <div class="top-box top-box-null"></div>
       <Star class="top-box top-box-fourth"></Star>
     </div>
     <v-divider :thickness="3" class="border-opacity-75" color="info"></v-divider>
