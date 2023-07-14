@@ -61,14 +61,14 @@ async function allUpdate() {
     msg.value = `updateTrainPositions Failed: ${error}`
     console.error(error)
   }
-  // try {
-  //   await updateHeatMap(map)
-  // } catch (error) {
-  //   msg.value = `updateHeatMap Failed: ${error}`
-  // }
-  // map.moveLayer(heatmapEntriesHeatId, positionId)
-  // map.moveLayer(heatmapEntriesPointId, positionId)
-  // map.moveLayer(heatmapEntriesLabelId, positionId)
+  try {
+    await updateHeatMap(map)
+  } catch (error) {
+    msg.value = `updateHeatMap Failed: ${error}`
+  }
+  map.moveLayer(heatmapEntriesHeatId, positionId)
+  map.moveLayer(heatmapEntriesPointId, positionId)
+  map.moveLayer(heatmapEntriesLabelId, positionId)
   map.moveLayer(positionId, null)
   loading.value = false
 }
