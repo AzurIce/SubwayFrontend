@@ -28,13 +28,14 @@ watch(enableRoute, (newVal) => { setRouteVisible(map, newVal) })
 watch(enablePos, (newVal) => { setPositionVisible(map, newVal) })
 
 async function updateRoutes() {
-  const geojson = await mapStore.getRoutesGeoJson()
+  const geojson = await mapStore.getRoutesGeoJson(true)
   console.log('updateRoutes: ', geojson)
   await updateRoute(map, geojson)
 }
 
 async function updateTrainPositions() {
   const trainPositionsGeoJson = await mapStore.getTrainPositionsGeoJson()
+  // console.log('updateTrainPositions: ', trainPositionsGeoJson)
   await updatePosition(map, trainPositionsGeoJson)
 }
 
@@ -42,20 +43,23 @@ const loading = ref(false)
 async function allUpdate() {
   console.log('loading...')
   loading.value = true
-  try {
-    await mapStore.updateData()
-  } catch (error) {
-    msg.value = `updateData Failed: ${error}`
-  }
+  // try {
+  //   await mapStore.updateData()
+  // } catch (error) {
+  //   msg.value = `updateData Failed: ${error}`
+  //   console.error(error)
+  // }
   try {
     await updateRoutes()
   } catch (error) {
     msg.value = `updateRoutes Failed: ${error}`
+    console.error(error)
   }
   try {
     await updateTrainPositions()
   } catch (error) {
     msg.value = `updateTrainPositions Failed: ${error}`
+    console.error(error)
   }
   // try {
   //   await updateHeatMap(map)
@@ -151,7 +155,7 @@ let trainPosInterval = 0
 function switchRealtime(res) {
   if (res) {
     dataInterval = setInterval(updateData, 2500)
-    trainPosInterval = setInterval(updateTrainPositions, 50)
+    trainPosInterval = setInterval(updateTrainPositions, 100)
   } else {
     clearInterval(dataInterval)
     clearInterval(trainPosInterval)

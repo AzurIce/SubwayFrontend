@@ -40,10 +40,14 @@
 //   })
 // })
 
-import { getUpdateData as g } from '@/lib/axios/goodservice'
+import { getUpdateData as gg, getParsedStations as g } from '@/lib/axios/goodservice'
 </script>
 
 <template>
-  <v-btn @click="g" inline >g</v-btn>
+  <v-btn @click="async() => {
+    const res = await gg()
+    console.log(res)
+    await g(res.stops)
+  }" inline >g</v-btn>
   <!-- <div ref="chart" class="tw-h-80 tw-w-80" /> -->
 </template>

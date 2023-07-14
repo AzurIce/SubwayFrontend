@@ -2,12 +2,8 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import axios from 'axios'
 
-// import { timeCount } from '../lib/utils'
 
 import * as turf from '@turf/turf'
-
-const apiUrl = 'https://www.goodservice.io/api/routes/?detailed=1'
-const stopsUrl = 'https://www.goodservice.io/api/stops/'
 
 const M_TRAIN_SHUFFLE = ["M21", "M20", "M19", "M18", "M16", "M14", "M13", "M12", "M11"];
 
@@ -37,14 +33,14 @@ function initStations() {
   return stations
 }
 
-import { getUpdateData } from '@/lib/axios/goodservice'
+import { getUpdateData, getParsedStations } from '@/lib/axios/goodservice'
 
 export const useMapStore = defineStore('goodservice', () => {
-  const trains = ref([])
-  const stops = ref({})
-  const stations = ref(initStations())
+  let trains = new Map()
+  let stops = {}
+  let stations = initStations()
   const processedRoutings = ref({})
-  const routingByDirection = ref({})
+  let routingByDirection = {}
   const routeStops = ref({})
   const destinations = ref(new Set())
   const transferStations = ref(new Set())
@@ -55,12 +51,15 @@ export const useMapStore = defineStore('goodservice', () => {
   function shouldReverseDirection(fromRouteId, toRouteId, stationId) {
     return Object.keys(STATIONS_TO_FLIP_DIRECTIONS).some((targetStation) => {
       const triggerStation = STATIONS_TO_FLIP_DIRECTIONS[targetStation];
-      return (stationId === targetStation && stations[triggerStation].stops.has(fromRouteId) !== stations[triggerStation].stops.has(toRouteId)) || fromRouteId === 'M' && M_TRAIN_SHUFFLE.includes(stationId);
+      return (
+        stationId === targetStation &&
+        stations.get(triggerStation).stops.has(fromRouteId) !==
+        stations.get(triggerStation).stops.has(toRouteId)
+      ) || fromRouteId === 'M' && M_TRAIN_SHUFFLE.includes(stationId);
     })
   }
 
   function calculateOffsets() {
-
     const _offsets = {};
     const _results = {};
     const offsetsMap = [0, -2, 2, -4, 4, -6, 6];
@@ -75,10 +74,12 @@ export const useMapStore = defineStore('goodservice', () => {
       }
 
       stops.forEach((stop) => {
-        stations.value[stop]["stops"].forEach((route) => {
-          if (_offsets[route] != undefined) {
-            let offsetToUse = _offsets[route];
-            if (shouldReverseDirection(train, route, stop)) {
+        // console.log(stations.get(stop))
+        stations.get(stop).stops.forEach((route, key) => {
+          // console.log(key)
+          if (_offsets[key] != undefined) {
+            let offsetToUse = _offsets[key];
+            if (shouldReverseDirection(train, key, stop)) {
               if (offsetToUse > 0) {
                 if (offsetToUse % 2 === 1) {
                   offsetToUse++;
@@ -92,42 +93,23 @@ export const useMapStore = defineStore('goodservice', () => {
         });
       });
 
-      while(conflictingOffsets.has(offset)) {
+      while (conflictingOffsets.has(offset)) {
         offset++;
       }
 
       _offsets[train] = offset;
     });
-    // console.log(_offsets)
 
     Object.keys(_offsets).forEach((key) => {
       _results[key] = offsetsMap[_offsets[key]]
     });
+    // console.log('offset: ', _results)
     offsets.value = _results
-    // console.log(_results)
   }
 
   function processRoutings() {
-    // console.log('> processRoutings')
-    // console.log(stops)
-    Object.keys(stationData).forEach((stationKey) => {
-      // console.log(stationKey)
-      stations[stationKey] = stationData[stationKey]
-      // stations[stationKey]['passed'] = new Set()
-      stations[stationKey]['stops'] = new Set(Object.keys(stops.value.get(stationKey).routes))
-      stations[stationKey]['northStops'] = new Set(
-        Object.keys(stops.value.get(stationKey).routes).filter((trainId) => {
-          return stops.value.get(stationKey).routes[trainId].includes('north')
-        })
-      )
-      stations[stationKey]['southStops'] = new Set(
-        Object.keys(stops.value.get(stationKey).routes).filter((trainId) => {
-          return stops.value.get(stationKey).routes[trainId].includes('south')
-        })
-      )
-    })
-
-    console.log('stations: ', stations)
+    stations = getParsedStations(stops)
+    // console.log(stations)
 
     const _processedRoutings = {}
     const _routingByDirection = {}
@@ -135,47 +117,51 @@ export const useMapStore = defineStore('goodservice', () => {
     const _destinations = new Set()
     const _transferStations = new Set()
 
-    Object.keys(trains.value).forEach((key) => {
-      // console.log('for each trains.value: ', key)
-      const northStops = new Set()
+    trains.forEach((route, key) => {
       const southStops = new Set()
-      const route = trains.value[key]
+      const northStops = new Set()
       _routeStops[key] = new Set()
-      const northRoutings =
-        route.actual_routings?.north?.map((r) => {
-          return r.map((stopId) => {
-            if (stations.value[stopId]) {
-              _routeStops[key].add(stopId)
-              northStops.add(stopId)
-            }
-            return stopId
-          })
-        }) || []
+
+      const northRoutings = route.actual_routings?.north?.map((r) => {
+        return r.map((stopId) => {
+          if (stations.get(stopId)) {
+            _routeStops[key].add(stopId)
+            northStops.add(stopId)
+          }
+          return stopId
+        })
+      }) || []
+
       const southRoutings =
         route.actual_routings?.south?.map((r) => {
           return r.map((stopId) => {
-            if (stations.value[stopId]) {
+            if (stations.get(stopId)) {
               _routeStops[key].add(stopId)
               southStops.add(stopId)
             }
             return stopId
           })
         }) || []
+
       _routingByDirection[key] = {
         north: northRoutings,
         south: southRoutings
       }
-      ;[northRoutings, southRoutings].forEach((direction) => {
-        direction.forEach((routing) => {
-          // console.log("$$$")
-          _destinations.add(routing[routing.length - 1])
-          // console.log("%%%")
-        })
+      // console.log(northRoutings, southRoutings)
+      northRoutings.forEach((routing) => {
+        _destinations.add(routing[routing.length - 1])
       })
+      southRoutings.forEach((routing) => {
+        _destinations.add(routing[routing.length - 1])
+      })
+
+      // console.log('_destinations: ', _destinations)
+
       const allRoutings = northRoutings.concat(
         southRoutings.map((routing) => routing.slice(0).reverse())
       )
       _processedRoutings[key] = Array.from(new Set(allRoutings.map(JSON.stringify)), JSON.parse)
+
     })
 
     // console.log('_processedRoutings: ', _processedRoutings)
@@ -187,15 +173,14 @@ export const useMapStore = defineStore('goodservice', () => {
         let prevTrains = []
 
         route.forEach((stop) => {
-          const stopData = stops.value.get(stop)
-          // console.log('stopData: ', stopData)
+          const stopData = stops.get(stop)
 
           if (!stopData) {
             return
           }
 
-          const trains = Object.keys(stops.value.get(stop).routes).flatMap((r) =>
-            stops.value.get(stop).routes[r].map((d) => `${r}-${d}`)
+          const trains = Object.keys(stops.get(stop).routes).flatMap((r) =>
+            stops.get(stop).routes[r].map((d) => `${r}-${d}`)
           )
 
           if (prevStop) {
@@ -218,7 +203,9 @@ export const useMapStore = defineStore('goodservice', () => {
     })
 
     processedRoutings.value = _processedRoutings
-    routingByDirection.value = _routingByDirection
+    // console.log('processedRoutings: ', processedRoutings.value)
+    routingByDirection = _routingByDirection
+    // console.log(routingByDirection)
     routeStops.value = _routeStops
     destinations.value = _destinations
     transferStations.value = _transferStations
@@ -226,14 +213,17 @@ export const useMapStore = defineStore('goodservice', () => {
 
   async function updateData() {
     const res = await getUpdateData()
-    trains.value = res.routes
-    stops.value = res.stops
+    trains = res.routes
+    stops = res.stops
+    // console.log('getUpdateData: ', res)
 
     processRoutings()
+    // console.log('processedRoutings2: ', processedRoutings.value)
     calculateOffsets()
   }
 
   function findPath(start, end, stepsTaken, stopsVisited) {
+    // console.log(stations)
     if (calculatedPaths[`${start}-${end}`]) {
       return calculatedPaths[`${start}-${end}`]
     }
@@ -241,36 +231,41 @@ export const useMapStore = defineStore('goodservice', () => {
       return
     }
     stopsVisited.push(start)
-    if (!stations[start] || !stations[start]['north']) {
+    // console.log(stations.get(start), stations.get(start).north)
+    if (!stations.get(start) || !stations.get(start).north) {
       return
     }
-    if (stations[start]['north'][end] != undefined) {
-      if (stations[start]['north'][end].length > 0) {
-        return stations[start]['north'][end]
+    // console.log(stations.get(start).north).get(end)
+    const tt = stations.get(start).north.get(end)
+    if (tt) {
+      if (tt.length > 0) {
+        return tt
       }
-      return [[stations[end].longitude, stations[end].latitude]]
+      return [[stations.get(end).longitude, stations.get(end).latitude]]
     } else if (stepsTaken > 12) {
       return
     }
+
     let results = []
-    Object.keys(stations[start]['north']).forEach((key) => {
+    stations.get(start).north.forEach((s, key) => {
       const path = findPath(key, end, stepsTaken + 1, stopsVisited)
       if (path && path.length) {
-        if (stations[start]['north'][key].length) {
-          results = stations[start]['north'][key]
-            .concat([[stations[key].longitude, stations[key].latitude]])
+        if (stations.get(start).north.get(key).length) {
+          results = stations.get(start).north.get(key)
+            .concat([[stations.get(key).longitude, stations.get(key).latitude]])
             .concat(path)
         } else {
-          results = [[stations[key].longitude, stations[key].latitude]].concat(path)
+          results = [[stations.get(key).longitude, stations.get(key).latitude]].concat(path)
         }
       }
     })
+    // console.log(results)
     calculatedPaths[`${start}-${end}`] = results
     return results
   }
 
   function getRoutePath(route) {
-    // console.log('routingGeoJson...')
+    // console.log('getRoutePath: ', route)
     const r = route.slice(0)
 
     let path = []
@@ -278,22 +273,24 @@ export const useMapStore = defineStore('goodservice', () => {
 
     r.forEach((stopId, index) => {
       let tempPath = []
-      // console.log('prev: ', prev)
-      tempPath.push([stations[prev].longitude, stations[prev].latitude])
+      tempPath.push([stations.get(prev).longitude, stations.get(prev).latitude])
       let potentialPath = findPath(prev, stopId, 0, [])
+      // console.log(potentialPath)
       if (potentialPath) {
         potentialPath.forEach((coord) => {
           tempPath.push(coord)
         })
       }
-      if (stations[stopId]) {
-        tempPath.push([stations[stopId].longitude, stations[stopId].latitude])
+      // console.log(stations.get(stopId))
+      if (stations.get(stopId)) {
+        tempPath.push([stations.get(stopId).longitude, stations.get(stopId).latitude])
         path = path.concat(tempPath)
 
         prev = stopId
       }
     })
 
+    // console.log(path)
     return path
   }
 
@@ -301,21 +298,25 @@ export const useMapStore = defineStore('goodservice', () => {
     if (refreshData) {
       await updateData()
     }
-      // console.log("!!!")
-      // console.log(trains.value)
+
+    // console.log('processedRoutings: ', processedRoutings.value)
+
+    // console.log(processedRoutings.value['2'].map((r) => { return getRoutePath(r) }))
+
     let features = []
-    Object.keys(trains.value).forEach((key) => {
-      // console.log("???")
-      if (!processedRoutings.value[key].length) {
+    trains.forEach((value, key) => {
+      // console.log(key)
+      if (processedRoutings.value[key] == undefined || !processedRoutings.value[key].length) {
         return
       }
 
+      // console.log(processedRoutings.value[key])
       const coordinates = processedRoutings.value[key].map((r) => {
         return getRoutePath(r)
       })
       // console.log(coordinates)
 
-      const route = trains.value[key]
+      const route = trains.get(key)
       const geojson = {
         type: 'Feature',
         properties: {
@@ -330,7 +331,7 @@ export const useMapStore = defineStore('goodservice', () => {
       }
       features.push(geojson)
     })
-    
+
     const geojson = {
       'type': 'FeatureCollection',
       'features': features
@@ -339,23 +340,34 @@ export const useMapStore = defineStore('goodservice', () => {
   }
 
   function calculateTrainPositions(currentTime) {
-    const _trains = trains.value
-    const _routingByDirection = routingByDirection.value
+    // const _routingByDirection = routingByDirection.value
     let trainPositions = [];
 
-    for (const routeId in _trains) {
-      const arrivalInfo = _trains[routeId].trips;
+    // console.log(trains)
+    trains.forEach((route, routeId) => {
+
+      const arrivalInfo = route.trips;
       if (!arrivalInfo) {
-        continue;
+        return;
       }
+      // console.log(route, routeId)
 
-      ['north', 'south'].forEach((direction) => {
-        const fullRoutings = _routingByDirection[routeId] && _routingByDirection[routeId][direction];
+      new Array('north', 'south').forEach((direction) => {
+        // if (!routingByDirection[routeId].north.length || !routingByDirection[routeId].south.length) {
+        //   return ;
+        // }
+        const fullRoutings = routingByDirection[routeId] && routingByDirection[routeId][direction];
+        // console.log(routingByDirection)
+        // console.log(routingByDirection[routeId])
+        // console.log('fullRoutings: ', fullRoutings)
+
+        // console.log(arrivalInfo)
+        // console.log(direction)
+        // console.log(arrivalInfo[direction])
+        // console.log(arrivalInfo['north'])
         const trainArrivals = arrivalInfo[direction] || [];
-
-        if (!fullRoutings) {
-          return;
-        }
+        // console.log("?")
+        // console.log('trainArrivals; ', trainArrivals)
 
         trainArrivals.forEach((arr) => {
           let previousStation;
@@ -363,6 +375,7 @@ export const useMapStore = defineStore('goodservice', () => {
           let previousStationEstimatedTime;
           let nextStationEstimatedTime;
           const sortedStops = Object.keys(arr.stops).sort((a, b) => arr.stops[a] - arr.stops[b]);
+          // console.log('sortedStops: ', sortedStops)
 
           if (arr.is_delayed) {
             previousStation = arr.last_stop_made;
@@ -376,21 +389,25 @@ export const useMapStore = defineStore('goodservice', () => {
             nextStationEstimatedTime = Math.max(arr.stops[nextStation], currentTime + 60);
 
           } else {
-            nextStation = sortedStops.find((key) => arr.stops[key] > currentTime && stations[key]);
+            nextStation = sortedStops.find((key) => arr.stops[key] > currentTime && stations.get(key));
             nextStationEstimatedTime = arr.stops[nextStation];
 
             const precedingStations = sortedStops.slice(0, sortedStops.indexOf(nextStation)).reverse();
-            previousStation = precedingStations.find((key) => arr.stops[key] <= currentTime && stations[key]);
+            previousStation = precedingStations.find((key) => arr.stops[key] <= currentTime && stations.get(key));
             previousStationEstimatedTime = arr.stops[previousStation];
 
+            // console.log('previousStation: ', previousStation)
             if (!previousStation) {
               const nextId = nextStation;
               if (fullRoutings.some((r) => r[0] === nextId)) {
+                // console.log('fullRoutings.some return')
                 return;
               }
 
               const matchedRouting = fullRoutings.find((r) => r.includes(nextId))
+              // console.log(matchedRouting)
               if (!matchedRouting) {
+                // console.log('matchedRouting return')
                 return;
               }
 
@@ -402,6 +419,7 @@ export const useMapStore = defineStore('goodservice', () => {
             }
           }
 
+          // console.log(nextStation, previousStation)
           if (!nextStation || !previousStation) {
             return;
           }
@@ -416,10 +434,10 @@ export const useMapStore = defineStore('goodservice', () => {
             estimated_time: previousStationEstimatedTime,
           }
 
-
+          // console.log("???")
           trainPositions.push({
             route: routeId,
-            routeName: _trains[routeId].name,
+            routeName: route.name,
             id: arr.id,
             direction: direction,
             delayed: arr.is_delayed,
@@ -428,7 +446,7 @@ export const useMapStore = defineStore('goodservice', () => {
           });
         });
       });
-    }
+    })
 
     return trainPositions;
   }
@@ -441,15 +459,15 @@ export const useMapStore = defineStore('goodservice', () => {
 
     r.forEach((stopId, index) => {
       let tempPath = [];
-      tempPath.push([stations[prev].longitude, stations[prev].latitude]);
+      tempPath.push([stations.get(prev).longitude, stations.get(prev).latitude]);
       let potentialPath = findPath(prev, stopId, 0, []);
       if (potentialPath) {
         potentialPath.forEach((coord) => {
           tempPath.push(coord);
         });
       }
-      if (stations[stopId]) {
-        tempPath.push([stations[stopId].longitude, stations[stopId].latitude]);
+      if (stations.get(stopId)) {
+        tempPath.push([stations.get(stopId).longitude, stations.get(stopId).latitude]);
         path = path.concat(tempPath);
 
         prev = stopId;
@@ -467,7 +485,7 @@ export const useMapStore = defineStore('goodservice', () => {
 
     const currentTime = Date.now() / 1000
     const trainPositions = calculateTrainPositions(currentTime)
-    // console.log(trainPositions)
+    // console.log('trainPositions: ', trainPositions)
 
     const geojson = {
       "type": "FeatureCollection",
@@ -487,7 +505,7 @@ export const useMapStore = defineStore('goodservice', () => {
           turf.helpers.point(feature.geometry.coordinates), turf.helpers.point(pointAhead.geometry.coordinates)
         );
         // const bearingInRads = (bearing - this.map.getBearing()) * (Math.PI / 180);
-        const textColor = trains.value[pos.route].color.toLowerCase() === '#fbbd08' ? '#000000' : '#ffffff';
+        const textColor = trains.get(pos.route).color.toLowerCase() === '#fbbd08' ? '#000000' : '#ffffff';
         // let visibility = false;
 
         // if ((this.selectedTrip && this.selectedTrip.id === pos.id) || this.selectedTrains.includes(pos.route)) {
@@ -507,10 +525,10 @@ export const useMapStore = defineStore('goodservice', () => {
           "routeId": pos.route,
           "tripId": pos.id,
           "direction": pos.direction,
-          "color": trains.value[pos.route].color,
+          "color": trains.get(pos.route).color,
           // "icon": pos.routeName.endsWith('X') ? `train-pos-x-${trains.value[pos.route].color.slice(1).toLowerCase()}` : `train-pos-${trains.value[pos.route].color.slice(1).toLowerCase()}`,
           "icon": 'train',
-          "icon-color": trains.value[pos.route].color,
+          "icon-color": trains.get(pos.route).color,
           "text-color": textColor,
           "alternate-text-color": (pos.delayed) ? '#ff0000' : textColor,
           "halo-width": (pos.delayed) ? 1 : 0,

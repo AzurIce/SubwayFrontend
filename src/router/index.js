@@ -9,8 +9,6 @@ import CountPage from '@/pages/main/CountPage.vue'
 import AdminPage from '@/pages/main/AdminPage.vue'
 import WarningPage from '@/pages/main/WarningPage.vue'
 import { useTokenStore } from '@/stores/token'
-import combine from '@turf/combine'
-import { componentChars } from 'mdurl/encode'
 
 
 const router = createRouter({
