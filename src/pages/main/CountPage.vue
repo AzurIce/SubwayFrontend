@@ -4,11 +4,9 @@
 
     <div class="top-section">
       <Palltte class="top-box top-box-first" @changeColor="changeColor"></Palltte>
-      <div class="top-box">
-        <v-date-picker></v-date-picker>
-      </div>
 
-      <div class="top-box">区域3</div>
+      <div class="top-box top-box-null">区域2</div>
+      <div class="top-box top-box-null">区域3</div>
       <Star class="top-box top-box-fourth"></Star>
     </div>
     <v-divider :thickness="3" class="border-opacity-75" color="info"></v-divider>
@@ -22,6 +20,7 @@
                 <v-expansion-panel-text>
                   1.请输入你所要查询的日期，以4个小时为单位<br /> 示例值: 2017-02-04 04:00:00<br /> 默认值取当前时间<br>
                   2.输入你所要查询的站点 <br />示例值 R01<br />
+                  3.输出内容前7个值为真实值，后3个值为预测值<br />
                 </v-expansion-panel-text>
               </v-expansion-panel>
             </v-expansion-panels>
@@ -122,9 +121,13 @@ export default {
           axisLabel: {
             rotate: 60
           }
+        },
+        stroke: {
+          curve: 'smooth'
         }
-      }
+      },
     }
+
   },
   methods: {
     changeColor(color) {
@@ -141,10 +144,11 @@ export default {
       this.lineOptions.xaxis.categories = this.chartData.labels;
       this.linechart = new ApexCharts(document.querySelector('#lineContainer'), this.lineOptions)
       this.linechart.render();
+
     },
     submit() {
       console.log(this.data + "  " + this.station + "  " + this.period);
-      // if (this.data != '') {
+      console.log(this.station)
       let submitdata = this.data
       if (this.data == '')
         submitdata = getCurData()
@@ -225,7 +229,7 @@ export default {
         console.log(err)
       }).finally(() => {
       })
-      // } 
+
     }
 
   },
@@ -238,7 +242,7 @@ export default {
     getAllStations().then((response) => {
       const data = response.data;
       const gtfsStopIds = data.data.map(obj => obj.GTFS_Stop_ID);
-      this.stations=gtfsStopIds
+      this.stations = gtfsStopIds
 
     }).catch(error => {
       console.error(error);
@@ -266,7 +270,11 @@ export default {
 
 .top-box {
   flex: 2;
-  border: 1px solid black;
+  border: null;
+}
+
+.top-box-null{
+  border:"";
 }
 
 .top-box-first {
