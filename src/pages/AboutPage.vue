@@ -2,8 +2,6 @@
   <div class="about">
     <div class="con">
       <v-btn icon="mdi-open-in-new" size="large" style="position: fixed;top: 3%;left: 3%; z-index: 3;" @click="exit()" ></v-btn>
-      <!-- <v-btn icon="mdi-open-in-new" size="large" @click="exit()"></v-btn> -->
-      <!-- <h1 class="green tw-text-center">北京交通大学软件学院2023暑期实训项目</h1> -->
       <MTitleVue></MTitleVue>
       <h2 class="green jump">
         <span>自</span>
@@ -144,7 +142,6 @@ h2 {
 .ppC {
     display: block;
     margin: 0;
-    /* font-family: Sacramento, cursive; */
     text-align: center;
     font-weight: bold;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5), -2px -2px 4px rgba(255, 255, 255, 0.5);
